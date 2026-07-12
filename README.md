@@ -1,0 +1,1 @@
+# Gold_AI_Scalper_Pro_X
