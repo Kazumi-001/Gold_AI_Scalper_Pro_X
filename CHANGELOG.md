@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.004] - 2026-07-14
+
+### Added
+
+- Initial market-order execution from qualified Signal Engine output.
+- Grid + ATR hybrid adverse-distance scaling.
+- Six-level lot progression: 0.01, 0.02, 0.03, 0.05, 0.08, 0.13.
+- Six-position cap, cooldown, symbol/magic filtering and duplicate-direction guard.
+- XM lot-step normalization and execution error logging.
+- Virtual trade state and CSV events in Simulation Mode.
+
+### Safety
+
+- Live execution requires both `InpSimulationMode=false` and `InpEnableLiveTrading=true`.
+- SL/TP and portfolio risk management remain assigned to Build 1.0.005.
+
 ## [1.0.003] - 2026-07-14
 
 ### Added

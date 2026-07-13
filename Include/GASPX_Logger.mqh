@@ -71,6 +71,22 @@ public:
       FileFlush(m_handle);
    }
 
+   void Trade(const string action,const int direction,const double lots,
+              const double price,const int level,const bool simulated,const string details)
+   {
+      if(!m_enabled || m_handle==INVALID_HANDLE) return;
+      string side=(direction>0 ? "BUY" : "SELL");
+      string payload="action="+action+",side="+side+
+                     ",lots="+DoubleToString(lots,2)+
+                     ",price="+DoubleToString(price,Digits)+
+                     ",level="+IntegerToString(level)+
+                     ",mode="+(simulated ? "SIMULATION" : "LIVE")+
+                     ",details="+details;
+      FileWrite(m_handle,TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS),"TRADE",Symbol(),
+                DoubleToString(Bid,Digits),DoubleToString(Ask,Digits),"","","","","",payload);
+      FileFlush(m_handle);
+   }
+
    void Close(void)
    {
       if(m_handle!=INVALID_HANDLE) FileClose(m_handle);

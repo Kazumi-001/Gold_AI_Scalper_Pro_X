@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.003"
-#property description "Gold AI Scalper Pro X - Build 1.0.003 Signal Engine"
+#property version   "1.004"
+#property description "Gold AI Scalper Pro X - Build 1.0.004 Trade Engine"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"
@@ -12,11 +12,14 @@
 #include "Include/GASPX_SessionFilter.mqh"
 #include "Include/GASPX_ScoreEngine.mqh"
 #include "Include/GASPX_SignalEngine.mqh"
-
+#include "Include/GASPX_OrderEngine.mqh"
 GASPX_Logger g_logger;
+#include "Include/GASPX_TradeEngine.mqh"
+
 datetime g_lastSnapshot=0;
 datetime g_lastSignalBar=0;
 GASPX_SignalResult g_lastSignal;
+GASPX_TradeEngine g_tradeEngine;
 
 int OnInit()
 {
@@ -76,7 +79,9 @@ void GASPX_ProcessSnapshot()
       g_lastSignalBar=closedBar;
       GASPX_EvaluateSignal(snapshot,g_lastSignal);
       g_logger.Signal(g_lastSignal);
+      g_tradeEngine.OnSignal(g_lastSignal);
    }
+   g_tradeEngine.ProcessGrid();
 
    Comment(GASPX_NAME,"\n",
            "Version ",GASPX_VERSION," / Build ",GASPX_BUILD,"\n",
@@ -89,7 +94,7 @@ void GASPX_ProcessSnapshot()
    if(g_lastSignalBar>0)
       Comment(GASPX_NAME,"\n",
               "Version ",GASPX_VERSION," / Build ",GASPX_BUILD,"\n",
-              "Mode: SIGNAL SIMULATION\n",
+              "Mode: ",InpSimulationMode || !InpEnableLiveTrading ? "TRADE SIMULATION" : "LIVE TRADING","\n",
               "MarketScore: ",DoubleToString(snapshot.marketScore,1),
               "  DangerScore: ",DoubleToString(snapshot.dangerScore,1),"\n",
               "BuyScore: ",g_lastSignal.buyScore,"  SellScore: ",g_lastSignal.sellScore,"\n",
