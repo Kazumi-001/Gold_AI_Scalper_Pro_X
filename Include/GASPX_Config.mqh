@@ -3,7 +3,7 @@
 
 #define GASPX_NAME          "Gold AI Scalper Pro X"
 #define GASPX_VERSION       "1.0"
-#define GASPX_BUILD         "1.0.008"
+#define GASPX_BUILD         "1.0.009"
 #define GASPX_MAGIC_DEFAULT 777
 
 input bool   InpSimulationMode = true;
@@ -47,6 +47,7 @@ input double InpBasketProfitPercent = 2.0;
 input double InpBasketLossPercent = 5.0;
 input bool   InpShowDashboard = true;
 input int    InpMinimumHistoryBars = 250;
+input bool   InpRunStartupSelfTest = true;
 
 bool GASPX_ValidateInputs(string &reason)
 {

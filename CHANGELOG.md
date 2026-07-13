@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.009] - 2026-07-14
+
+### Added
+
+- Startup verification module with CSV PASS/FAIL results.
+- Simulation preset for XM XAUUSD M1.
+- Repository static-check script and GitHub Actions workflow.
+- MT4 compilation, Strategy Tester and acceptance checklist.
+- Backtest result directory guidance.
+
 ## [1.0.008] - 2026-07-14
 
 ### Added

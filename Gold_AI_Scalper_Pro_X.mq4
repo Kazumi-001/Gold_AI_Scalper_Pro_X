@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.008"
-#property description "Gold AI Scalper Pro X - Build 1.0.008 Integration"
+#property version   "1.009"
+#property description "Gold AI Scalper Pro X - Build 1.0.009 Verification"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"
@@ -19,6 +19,7 @@ bool g_riskAllowsTrading=true;
 #include "Include/GASPX_RiskManager.mqh"
 #include "Include/GASPX_PositionManager.mqh"
 #include "Include/GASPX_Integration.mqh"
+#include "Include/GASPX_Verification.mqh"
 #include "Include/GASPX_Dashboard.mqh"
 
 datetime g_lastSnapshot=0;
@@ -28,6 +29,7 @@ GASPX_TradeEngine g_tradeEngine;
 GASPX_RiskManager g_riskManager;
 GASPX_PositionManager g_positionManager;
 GASPX_Integration g_integration;
+GASPX_Verification g_verification;
 GASPX_Dashboard g_dashboard;
 
 int OnInit()
@@ -49,6 +51,12 @@ int OnInit()
       return(INIT_FAILED);
    }
    if(!g_logger.Open(InpEnableCsvLog)) return(INIT_FAILED);
+   if(InpRunStartupSelfTest && !g_verification.Run())
+   {
+      g_logger.Event("INIT_FAILED","Startup self-test failed");
+      g_logger.Close();
+      return(INIT_FAILED);
+   }
    g_riskManager.Initialize();
    g_logger.Event("INIT","Build "+GASPX_BUILD+" started");
    EventSetTimer(1);

@@ -120,6 +120,15 @@ public:
       FileFlush(m_handle);
    }
 
+   void Verification(const string testName,const bool passed,const string details)
+   {
+      if(!m_enabled || m_handle==INVALID_HANDLE) return;
+      FileWrite(m_handle,TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS),"VERIFY",Symbol(),
+                DoubleToString(Bid,Digits),DoubleToString(Ask,Digits),"","","","","",
+                "test="+testName+",result="+(passed ? "PASS" : "FAIL")+",details="+details);
+      FileFlush(m_handle);
+   }
+
    void Close(void)
    {
       if(m_handle!=INVALID_HANDLE) FileClose(m_handle);
