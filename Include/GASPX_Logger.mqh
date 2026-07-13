@@ -87,6 +87,15 @@ public:
       FileFlush(m_handle);
    }
 
+   void Risk(const string action,const double value,const string details)
+   {
+      if(!m_enabled || m_handle==INVALID_HANDLE) return;
+      string payload="action="+action+",value="+DoubleToString(value,2)+",details="+details;
+      FileWrite(m_handle,TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS),"RISK",Symbol(),
+                DoubleToString(Bid,Digits),DoubleToString(Ask,Digits),"","","","","",payload);
+      FileFlush(m_handle);
+   }
+
    void Close(void)
    {
       if(m_handle!=INVALID_HANDLE) FileClose(m_handle);

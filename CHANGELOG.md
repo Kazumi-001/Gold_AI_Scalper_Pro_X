@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.005] - 2026-07-14
+
+### Added
+
+- ATR 2.0 stop-loss and ATR 1.5 take-profit.
+- Break-even at 1.0 ATR with 10-point offset.
+- 1.0 ATR trailing stop and 50% partial close at 1.0 ATR.
+- Daily loss limit 5% and maximum equity drawdown 10%.
+- Basket profit exit 2% and basket loss exit 5%.
+- Emergency basket close and trading block.
+- Simulation-mode virtual P/L, partial and exit events.
+- Live `OrderModify`/`OrderClose` management with CSV risk logging.
+
 ## [1.0.004] - 2026-07-14
 
 ### Added

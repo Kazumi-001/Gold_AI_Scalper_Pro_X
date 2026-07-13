@@ -7,6 +7,8 @@ private:
    int m_virtualDirection;
    int m_virtualCount;
    double m_virtualLastPrice;
+   double m_virtualAveragePrice;
+   double m_virtualTotalLots;
    datetime m_lastAction;
 
    bool IsSimulation(void) { return(InpSimulationMode || !InpEnableLiveTrading); }
@@ -34,16 +36,44 @@ private:
       m_virtualDirection=direction;
       m_virtualCount=level+1;
       m_virtualLastPrice=price;
+      double previousLots=m_virtualTotalLots;
+      m_virtualTotalLots+=lots;
+      if(m_virtualTotalLots>0.0)
+         m_virtualAveragePrice=(m_virtualAveragePrice*previousLots+price*lots)/m_virtualTotalLots;
       m_lastAction=TimeCurrent();
    }
 
 public:
    GASPX_TradeEngine(void)
-   { m_virtualDirection=0; m_virtualCount=0; m_virtualLastPrice=0.0; m_lastAction=0; }
+   { m_virtualDirection=0; m_virtualCount=0; m_virtualLastPrice=0.0;
+     m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_lastAction=0; }
+
+   int VirtualDirection(void) { return(m_virtualDirection); }
+   int VirtualCount(void) { return(m_virtualCount); }
+   double VirtualAveragePrice(void) { return(m_virtualAveragePrice); }
+   double VirtualTotalLots(void) { return(m_virtualTotalLots); }
+
+   void ResetVirtual(const string reason)
+   {
+      if(m_virtualCount>0)
+         g_logger.Trade("BASKET_CLOSE",m_virtualDirection,m_virtualTotalLots,
+                        m_virtualDirection>0 ? Bid : Ask,m_virtualCount-1,true,reason);
+      m_virtualDirection=0; m_virtualCount=0; m_virtualLastPrice=0.0;
+      m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_lastAction=TimeCurrent();
+   }
+
+   void PartialVirtual(const string reason)
+   {
+      if(m_virtualCount<=0 || m_virtualTotalLots<=0.0) return;
+      double closed=m_virtualTotalLots*(InpPartialClosePercent/100.0);
+      m_virtualTotalLots-=closed;
+      g_logger.Trade("PARTIAL_CLOSE",m_virtualDirection,closed,
+                     m_virtualDirection>0 ? Bid : Ask,m_virtualCount-1,true,reason);
+   }
 
    void OnSignal(const GASPX_SignalResult &signal)
    {
-      if(signal.direction==GASPX_SIGNAL_NONE || !CooldownPassed()) return;
+      if(!g_riskAllowsTrading || signal.direction==GASPX_SIGNAL_NONE || !CooldownPassed()) return;
       int direction=(int)signal.direction;
       int type=(direction>0 ? OP_BUY : OP_SELL);
       int opposite=(direction>0 ? OP_SELL : OP_BUY);
@@ -70,7 +100,7 @@ public:
 
    void ProcessGrid(void)
    {
-      if(!CooldownPassed() || !GASPX_SpreadAllowed()) return;
+      if(!g_riskAllowsTrading || !CooldownPassed() || !GASPX_SpreadAllowed()) return;
       RefreshRates();
       int direction=0;
       int count=0;

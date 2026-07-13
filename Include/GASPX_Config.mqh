@@ -3,7 +3,7 @@
 
 #define GASPX_NAME          "Gold AI Scalper Pro X"
 #define GASPX_VERSION       "1.0"
-#define GASPX_BUILD         "1.0.004"
+#define GASPX_BUILD         "1.0.005"
 #define GASPX_MAGIC_DEFAULT 777
 
 input bool   InpSimulationMode = true;
@@ -34,6 +34,17 @@ input bool   InpUseAtrGrid        = true;
 input double InpGridAtrMultiplier = 1.0;
 input int    InpMaxPositions      = 6;
 input int    InpTradeCooldownSeconds = 30;
+input double InpStopLossAtrMultiplier = 2.0;
+input double InpTakeProfitAtrMultiplier = 1.5;
+input double InpBreakEvenTriggerAtr = 1.0;
+input int    InpBreakEvenOffsetPoints = 10;
+input double InpTrailingAtrMultiplier = 1.0;
+input double InpPartialTriggerAtr = 1.0;
+input double InpPartialClosePercent = 50.0;
+input double InpDailyLossLimitPercent = 5.0;
+input double InpMaximumDrawdownPercent = 10.0;
+input double InpBasketProfitPercent = 2.0;
+input double InpBasketLossPercent = 5.0;
 
 bool GASPX_ValidateInputs(string &reason)
 {
@@ -55,6 +66,14 @@ bool GASPX_ValidateInputs(string &reason)
    { reason="Trade execution settings are invalid"; return(false); }
    if(InpMaxPositions<1 || InpMaxPositions>6) { reason="MaxPositions must be 1..6"; return(false); }
    if(InpTradeCooldownSeconds<0) { reason="TradeCooldownSeconds must not be negative"; return(false); }
+   if(InpStopLossAtrMultiplier<=0.0 || InpTakeProfitAtrMultiplier<=0.0 ||
+      InpBreakEvenTriggerAtr<=0.0 || InpTrailingAtrMultiplier<=0.0 || InpPartialTriggerAtr<=0.0)
+   { reason="ATR risk multipliers must be positive"; return(false); }
+   if(InpPartialClosePercent<=0.0 || InpPartialClosePercent>=100.0)
+   { reason="PartialClosePercent must be between 0 and 100"; return(false); }
+   if(InpDailyLossLimitPercent<=0.0 || InpMaximumDrawdownPercent<=0.0 ||
+      InpBasketProfitPercent<=0.0 || InpBasketLossPercent<=0.0)
+   { reason="Risk percentage limits must be positive"; return(false); }
    reason="";
    return(true);
 }

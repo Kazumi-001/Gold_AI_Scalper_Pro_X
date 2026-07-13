@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.004"
-#property description "Gold AI Scalper Pro X - Build 1.0.004 Trade Engine"
+#property version   "1.005"
+#property description "Gold AI Scalper Pro X - Build 1.0.005 Risk Manager"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"
@@ -14,12 +14,15 @@
 #include "Include/GASPX_SignalEngine.mqh"
 #include "Include/GASPX_OrderEngine.mqh"
 GASPX_Logger g_logger;
+bool g_riskAllowsTrading=true;
 #include "Include/GASPX_TradeEngine.mqh"
+#include "Include/GASPX_RiskManager.mqh"
 
 datetime g_lastSnapshot=0;
 datetime g_lastSignalBar=0;
 GASPX_SignalResult g_lastSignal;
 GASPX_TradeEngine g_tradeEngine;
+GASPX_RiskManager g_riskManager;
 
 int OnInit()
 {
@@ -40,6 +43,7 @@ int OnInit()
       return(INIT_FAILED);
    }
    if(!g_logger.Open(InpEnableCsvLog)) return(INIT_FAILED);
+   g_riskManager.Initialize();
    g_logger.Event("INIT","Build "+GASPX_BUILD+" started");
    EventSetTimer(1);
    return(INIT_SUCCEEDED);
@@ -82,6 +86,7 @@ void GASPX_ProcessSnapshot()
       g_tradeEngine.OnSignal(g_lastSignal);
    }
    g_tradeEngine.ProcessGrid();
+   g_riskManager.Process(g_tradeEngine);
 
    Comment(GASPX_NAME,"\n",
            "Version ",GASPX_VERSION," / Build ",GASPX_BUILD,"\n",
@@ -100,5 +105,6 @@ void GASPX_ProcessSnapshot()
               "BuyScore: ",g_lastSignal.buyScore,"  SellScore: ",g_lastSignal.sellScore,"\n",
               "Signal: ",GASPX_SignalText(g_lastSignal.direction),
               "  Confidence: ",g_lastSignal.confidence,"\n",
-              "Reason: ",g_lastSignal.reason);
+              "Reason: ",g_lastSignal.reason,"\n",
+              "Risk: ",g_riskAllowsTrading ? "ACTIVE" : "BLOCKED");
 }
