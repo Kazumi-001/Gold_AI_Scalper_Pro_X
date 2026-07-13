@@ -39,4 +39,31 @@ double GASPX_ClampScore(const double value)
    return(value);
 }
 
+enum GASPX_SIGNAL_DIRECTION
+{
+   GASPX_SIGNAL_NONE = 0,
+   GASPX_SIGNAL_BUY  = 1,
+   GASPX_SIGNAL_SELL = -1
+};
+
+struct GASPX_SignalResult
+{
+   datetime barTime;
+   GASPX_SIGNAL_DIRECTION direction;
+   int buyScore;
+   int sellScore;
+   int confidence;
+   bool spreadAllowed;
+   bool sessionAllowed;
+   bool marketAllowed;
+   string reason;
+};
+
+string GASPX_SignalText(const GASPX_SIGNAL_DIRECTION direction)
+{
+   if(direction==GASPX_SIGNAL_BUY) return("BUY");
+   if(direction==GASPX_SIGNAL_SELL) return("SELL");
+   return("NONE");
+}
+
 #endif

@@ -3,7 +3,7 @@
 
 #define GASPX_NAME          "Gold AI Scalper Pro X"
 #define GASPX_VERSION       "1.0"
-#define GASPX_BUILD         "1.0.002"
+#define GASPX_BUILD         "1.0.003"
 #define GASPX_MAGIC_DEFAULT 777
 
 input bool   InpSimulationMode = true;
@@ -14,6 +14,19 @@ input int    InpAtrPeriod       = 14;
 input int    InpSnapshotSeconds = 10;
 input double InpAtrLowPoints    = 80.0;
 input double InpAtrHighPoints   = 1200.0;
+input int    InpEmaFastPeriod    = 20;
+input int    InpEmaMediumPeriod  = 50;
+input int    InpEmaSlowPeriod    = 200;
+input int    InpAdxPeriod        = 14;
+input double InpAdxMinimum       = 25.0;
+input double InpRetestAtrRatio   = 0.25;
+input double InpCandleMinAtrRatio = 0.10;
+input double InpCandleMaxAtrRatio = 1.50;
+input double InpMinimumMarketScore = 60.0;
+input double InpMaximumDangerScore = 70.0;
+input int    InpSignalThreshold  = 80;
+input int    InpSessionStartHour = 0;
+input int    InpSessionEndHour   = 24;
 
 bool GASPX_ValidateInputs(string &reason)
 {
@@ -23,6 +36,14 @@ bool GASPX_ValidateInputs(string &reason)
    if(InpSnapshotSeconds < 1)    { reason="SnapshotSeconds must be positive"; return(false); }
    if(InpAtrLowPoints < 0.0 || InpAtrHighPoints <= InpAtrLowPoints)
    { reason="ATR thresholds are invalid"; return(false); }
+   if(InpEmaFastPeriod<2 || InpEmaMediumPeriod<=InpEmaFastPeriod || InpEmaSlowPeriod<=InpEmaMediumPeriod)
+   { reason="EMA periods must be Fast < Medium < Slow"; return(false); }
+   if(InpAdxPeriod<2 || InpAdxMinimum<0.0) { reason="ADX settings are invalid"; return(false); }
+   if(InpRetestAtrRatio<=0.0 || InpCandleMinAtrRatio<0.0 || InpCandleMaxAtrRatio<=InpCandleMinAtrRatio)
+   { reason="Signal ratios are invalid"; return(false); }
+   if(InpSignalThreshold<0 || InpSignalThreshold>100) { reason="SignalThreshold must be 0..100"; return(false); }
+   if(InpSessionStartHour<0 || InpSessionStartHour>23 || InpSessionEndHour<1 || InpSessionEndHour>24)
+   { reason="Session hours are invalid"; return(false); }
    reason="";
    return(true);
 }

@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.003] - 2026-07-14
+
+### Added
+
+- EMA20/50/200 trend alignment filter.
+- ADX strength and directional filter.
+- ATR, spread, trading-session and candle-volatility filters.
+- EMA20 retest and directional candle scoring.
+- Buy/Sell score, confidence and 80-point signal threshold.
+- MarketScore/DangerScore safety gate.
+- Closed-M1-bar signal evaluation and CSV simulation logging.
+
+### Safety
+
+- Signal Engine is observation-only; no order functions are enabled.
+
 ## [1.0.002] - 2026-07-13
 
 ### Added

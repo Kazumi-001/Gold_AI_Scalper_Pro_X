@@ -2,16 +2,17 @@
 
 Gold AI Scalper Pro X is a modular Expert Advisor framework for MetaTrader 4.
 
-## Build 1.0.002 (Framework)
+## Build 1.0.003 (Signal Engine)
 
 - Platform: MetaTrader 4 Build 1400+
 - Target: XM XAUUSD/GOLD symbols
 - Timeframe: M1
 - Default mode: Simulation Mode (no live orders)
 - Framework modules: configuration, shared types, CSV logger, and market scoring
+- Signal modules: EMA trend, ADX, ATR, spread, session, retest, candle and score engines
 - Future Version 1.0 scope: adaptive market judgement, Grid + ATR hybrid execution, risk control, and dashboard
 
-This build intentionally does not place orders. Signal and trade engines are introduced in later builds.
+This build calculates simulation-only BUY/SELL scores on completed M1 bars and intentionally does not place orders.
 
 ## Installation
 
@@ -26,12 +27,12 @@ This build intentionally does not place orders. Signal and trade engines are int
 - Compilation completes with zero errors.
 - EA rejects non-M1 charts.
 - EA rejects symbols that do not contain `XAU` or `GOLD`.
-- The chart comment displays Build 1.0.002, spread, ATR, MarketScore and DangerScore.
+- The chart comment displays Build 1.0.003, MarketScore, DangerScore, BuyScore, SellScore and signal confidence.
+- One signal evaluation is written for each completed M1 bar.
 - CSV output is created under `MQL4/Files/Gold_AI_Scalper_Pro_X/` when logging is enabled.
 
 ## Roadmap
 
-- Build 1.0.003: Signal Engine
 - Build 1.0.004: Trade Engine
 - Build 1.0.005: Risk Manager
 

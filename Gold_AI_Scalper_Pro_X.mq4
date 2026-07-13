@@ -1,14 +1,22 @@
 #property strict
-#property version   "1.002"
-#property description "Gold AI Scalper Pro X - Build 1.0.002 Framework"
+#property version   "1.003"
+#property description "Gold AI Scalper Pro X - Build 1.0.003 Signal Engine"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"
 #include "Include/GASPX_Logger.mqh"
 #include "Include/GASPX_Market.mqh"
+#include "Include/GASPX_TrendFilter.mqh"
+#include "Include/GASPX_ATRFilter.mqh"
+#include "Include/GASPX_SpreadFilter.mqh"
+#include "Include/GASPX_SessionFilter.mqh"
+#include "Include/GASPX_ScoreEngine.mqh"
+#include "Include/GASPX_SignalEngine.mqh"
 
 GASPX_Logger g_logger;
 datetime g_lastSnapshot=0;
+datetime g_lastSignalBar=0;
+GASPX_SignalResult g_lastSignal;
 
 int OnInit()
 {
@@ -62,6 +70,14 @@ void GASPX_ProcessSnapshot()
    GASPX_ReadMarket(snapshot);
    g_logger.Snapshot(snapshot);
 
+   datetime closedBar=iTime(Symbol(),PERIOD_M1,1);
+   if(closedBar>0 && closedBar!=g_lastSignalBar)
+   {
+      g_lastSignalBar=closedBar;
+      GASPX_EvaluateSignal(snapshot,g_lastSignal);
+      g_logger.Signal(g_lastSignal);
+   }
+
    Comment(GASPX_NAME,"\n",
            "Version ",GASPX_VERSION," / Build ",GASPX_BUILD,"\n",
            "Mode: ",InpSimulationMode ? "SIMULATION" : "FRAMEWORK ONLY","\n",
@@ -70,4 +86,14 @@ void GASPX_ProcessSnapshot()
            "MarketScore: ",DoubleToString(snapshot.marketScore,1),"\n",
            "DangerScore: ",DoubleToString(snapshot.dangerScore,1),"\n",
            "State: ",GASPX_MarketStateText(snapshot.state));
+   if(g_lastSignalBar>0)
+      Comment(GASPX_NAME,"\n",
+              "Version ",GASPX_VERSION," / Build ",GASPX_BUILD,"\n",
+              "Mode: SIGNAL SIMULATION\n",
+              "MarketScore: ",DoubleToString(snapshot.marketScore,1),
+              "  DangerScore: ",DoubleToString(snapshot.dangerScore,1),"\n",
+              "BuyScore: ",g_lastSignal.buyScore,"  SellScore: ",g_lastSignal.sellScore,"\n",
+              "Signal: ",GASPX_SignalText(g_lastSignal.direction),
+              "  Confidence: ",g_lastSignal.confidence,"\n",
+              "Reason: ",g_lastSignal.reason);
 }

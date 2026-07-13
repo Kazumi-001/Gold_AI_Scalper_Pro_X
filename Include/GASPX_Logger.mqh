@@ -54,6 +54,23 @@ public:
       FileFlush(m_handle);
    }
 
+   void Signal(const GASPX_SignalResult &s)
+   {
+      if(!m_enabled || m_handle==INVALID_HANDLE) return;
+      string details="direction="+GASPX_SignalText(s.direction)+
+                     ",buy="+IntegerToString(s.buyScore)+
+                     ",sell="+IntegerToString(s.sellScore)+
+                     ",confidence="+IntegerToString(s.confidence)+
+                     ",spread="+(s.spreadAllowed ? "1" : "0")+
+                     ",session="+(s.sessionAllowed ? "1" : "0")+
+                     ",market="+(s.marketAllowed ? "1" : "0")+
+                     ",reason="+s.reason;
+      FileWrite(m_handle,TimeToString(s.barTime,TIME_DATE|TIME_SECONDS),"SIGNAL",Symbol(),
+                DoubleToString(Bid,Digits),DoubleToString(Ask,Digits),"","","",
+                "","",details);
+      FileFlush(m_handle);
+   }
+
    void Close(void)
    {
       if(m_handle!=INVALID_HANDLE) FileClose(m_handle);
