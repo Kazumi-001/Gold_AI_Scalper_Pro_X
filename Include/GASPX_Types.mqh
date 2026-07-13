@@ -77,4 +77,27 @@ struct GASPX_PositionSummary
    bool simulated;
 };
 
+enum GASPX_SYSTEM_STATE
+{
+   GASPX_SYSTEM_STARTING = 0,
+   GASPX_SYSTEM_READY,
+   GASPX_SYSTEM_HISTORY_BLOCK,
+   GASPX_SYSTEM_QUOTE_BLOCK,
+   GASPX_SYSTEM_BROKER_BLOCK,
+   GASPX_SYSTEM_MARKET_BLOCK
+};
+
+string GASPX_SystemStateText(const GASPX_SYSTEM_STATE state)
+{
+   switch(state)
+   {
+      case GASPX_SYSTEM_READY:         return("READY");
+      case GASPX_SYSTEM_HISTORY_BLOCK: return("HISTORY_BLOCK");
+      case GASPX_SYSTEM_QUOTE_BLOCK:   return("QUOTE_BLOCK");
+      case GASPX_SYSTEM_BROKER_BLOCK:  return("BROKER_BLOCK");
+      case GASPX_SYSTEM_MARKET_BLOCK:  return("MARKET_BLOCK");
+      default:                         return("STARTING");
+   }
+}
+
 #endif

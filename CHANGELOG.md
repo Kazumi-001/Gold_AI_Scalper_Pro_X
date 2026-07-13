@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.008] - 2026-07-14
+
+### Added
+
+- Integration controller and runtime system state.
+- Minimum M1 history validation before indicator execution.
+- Quote, XM contract specification and market-data health checks.
+- New Signal/Trade/Grid pipeline block when dependencies are not ready.
+- Risk and position management remain active during integration blocks.
+- Integration transition CSV logging and Dashboard status.
+
 ## [1.0.007] - 2026-07-14
 
 ### Added

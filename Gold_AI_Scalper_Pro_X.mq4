@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.007"
-#property description "Gold AI Scalper Pro X - Build 1.0.007 Dashboard"
+#property version   "1.008"
+#property description "Gold AI Scalper Pro X - Build 1.0.008 Integration"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"
@@ -18,6 +18,7 @@ bool g_riskAllowsTrading=true;
 #include "Include/GASPX_TradeEngine.mqh"
 #include "Include/GASPX_RiskManager.mqh"
 #include "Include/GASPX_PositionManager.mqh"
+#include "Include/GASPX_Integration.mqh"
 #include "Include/GASPX_Dashboard.mqh"
 
 datetime g_lastSnapshot=0;
@@ -26,6 +27,7 @@ GASPX_SignalResult g_lastSignal;
 GASPX_TradeEngine g_tradeEngine;
 GASPX_RiskManager g_riskManager;
 GASPX_PositionManager g_positionManager;
+GASPX_Integration g_integration;
 GASPX_Dashboard g_dashboard;
 
 int OnInit()
@@ -80,19 +82,20 @@ void GASPX_ProcessSnapshot()
    GASPX_MarketSnapshot snapshot;
    GASPX_ReadMarket(snapshot);
    g_logger.Snapshot(snapshot);
+   bool pipelineReady=g_integration.Update(snapshot);
 
    datetime closedBar=iTime(Symbol(),PERIOD_M1,1);
-   if(closedBar>0 && closedBar!=g_lastSignalBar)
+   if(pipelineReady && closedBar>0 && closedBar!=g_lastSignalBar)
    {
       g_lastSignalBar=closedBar;
       GASPX_EvaluateSignal(snapshot,g_lastSignal);
       g_logger.Signal(g_lastSignal);
       g_tradeEngine.OnSignal(g_lastSignal);
    }
-   g_tradeEngine.ProcessGrid();
+   if(pipelineReady) g_tradeEngine.ProcessGrid();
    g_riskManager.Process(g_tradeEngine);
    g_positionManager.Refresh(g_tradeEngine);
    GASPX_PositionSummary position=g_positionManager.Summary();
 
-   g_dashboard.Render(snapshot,g_lastSignal,position,g_riskAllowsTrading);
+   g_dashboard.Render(snapshot,g_lastSignal,position,g_riskAllowsTrading,g_integration.State());
 }

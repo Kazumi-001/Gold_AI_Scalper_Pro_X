@@ -19,7 +19,8 @@ private:
 
 public:
    void Render(const GASPX_MarketSnapshot &market,const GASPX_SignalResult &signal,
-               const GASPX_PositionSummary &position,const bool riskAllowed)
+               const GASPX_PositionSummary &position,const bool riskAllowed,
+               const GASPX_SYSTEM_STATE systemState)
    {
       if(!InpShowDashboard) { Comment(""); return; }
       string signalText=(signal.barTime>0 ? GASPX_SignalText(signal.direction) : "WAITING");
@@ -27,6 +28,7 @@ public:
       string panel=GASPX_NAME+"\n"+
                    "Version "+GASPX_VERSION+" / Build "+GASPX_BUILD+"\n"+
                    "Mode: "+ModeText()+"\n"+
+                   "System: "+GASPX_SystemStateText(systemState)+"\n"+
                    "--------------------------------\n"+
                    "Market: "+GASPX_MarketStateText(market.state)+
                    "  Spread: "+DoubleToString(market.spreadPoints,1)+" pt\n"+

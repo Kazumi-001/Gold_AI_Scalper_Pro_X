@@ -111,6 +111,15 @@ public:
       FileFlush(m_handle);
    }
 
+   void Integration(const GASPX_SYSTEM_STATE state,const string details)
+   {
+      if(!m_enabled || m_handle==INVALID_HANDLE) return;
+      FileWrite(m_handle,TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS),"INTEGRATION",Symbol(),
+                DoubleToString(Bid,Digits),DoubleToString(Ask,Digits),"","","","","",
+                "state="+GASPX_SystemStateText(state)+",details="+details);
+      FileFlush(m_handle);
+   }
+
    void Close(void)
    {
       if(m_handle!=INVALID_HANDLE) FileClose(m_handle);
