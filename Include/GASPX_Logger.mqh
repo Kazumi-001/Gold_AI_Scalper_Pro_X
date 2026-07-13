@@ -96,6 +96,21 @@ public:
       FileFlush(m_handle);
    }
 
+   void Position(const GASPX_PositionSummary &p,const string action)
+   {
+      if(!m_enabled || m_handle==INVALID_HANDLE) return;
+      string side=p.direction>0 ? "BUY" : (p.direction<0 ? "SELL" : "FLAT");
+      string payload="action="+action+",side="+side+
+                     ",count="+IntegerToString(p.count)+
+                     ",lots="+DoubleToString(p.totalLots,2)+
+                     ",average="+DoubleToString(p.averagePrice,Digits)+
+                     ",profit="+DoubleToString(p.floatingProfit,2)+
+                     ",mode="+(p.simulated ? "SIMULATION" : "LIVE");
+      FileWrite(m_handle,TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS),"POSITION",Symbol(),
+                DoubleToString(Bid,Digits),DoubleToString(Ask,Digits),"","","","","",payload);
+      FileFlush(m_handle);
+   }
+
    void Close(void)
    {
       if(m_handle!=INVALID_HANDLE) FileClose(m_handle);

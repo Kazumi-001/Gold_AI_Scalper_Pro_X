@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.005"
-#property description "Gold AI Scalper Pro X - Build 1.0.005 Risk Manager"
+#property version   "1.006"
+#property description "Gold AI Scalper Pro X - Build 1.0.006 Position Manager"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"
@@ -17,12 +17,14 @@ GASPX_Logger g_logger;
 bool g_riskAllowsTrading=true;
 #include "Include/GASPX_TradeEngine.mqh"
 #include "Include/GASPX_RiskManager.mqh"
+#include "Include/GASPX_PositionManager.mqh"
 
 datetime g_lastSnapshot=0;
 datetime g_lastSignalBar=0;
 GASPX_SignalResult g_lastSignal;
 GASPX_TradeEngine g_tradeEngine;
 GASPX_RiskManager g_riskManager;
+GASPX_PositionManager g_positionManager;
 
 int OnInit()
 {
@@ -87,6 +89,8 @@ void GASPX_ProcessSnapshot()
    }
    g_tradeEngine.ProcessGrid();
    g_riskManager.Process(g_tradeEngine);
+   g_positionManager.Refresh(g_tradeEngine);
+   GASPX_PositionSummary position=g_positionManager.Summary();
 
    Comment(GASPX_NAME,"\n",
            "Version ",GASPX_VERSION," / Build ",GASPX_BUILD,"\n",
@@ -106,5 +110,8 @@ void GASPX_ProcessSnapshot()
               "Signal: ",GASPX_SignalText(g_lastSignal.direction),
               "  Confidence: ",g_lastSignal.confidence,"\n",
               "Reason: ",g_lastSignal.reason,"\n",
-              "Risk: ",g_riskAllowsTrading ? "ACTIVE" : "BLOCKED");
+              "Risk: ",g_riskAllowsTrading ? "ACTIVE" : "BLOCKED","\n",
+              "Positions: ",position.count,"  Lots: ",DoubleToString(position.totalLots,2),"\n",
+              "Average: ",DoubleToString(position.averagePrice,Digits),
+              "  P/L: ",DoubleToString(position.floatingProfit,2));
 }

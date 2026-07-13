@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.006] - 2026-07-14
+
+### Added
+
+- Unified Position Manager for simulation and live baskets.
+- Position count, direction, total lots and volume-weighted average price.
+- Floating P/L including swap and commission for live orders.
+- XM tick-size/tick-value virtual P/L calculation.
+- Position-count transition logging and on-chart basket status.
+
 ## [1.0.005] - 2026-07-14
 
 ### Added

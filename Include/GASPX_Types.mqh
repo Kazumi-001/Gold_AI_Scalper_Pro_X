@@ -66,4 +66,15 @@ string GASPX_SignalText(const GASPX_SIGNAL_DIRECTION direction)
    return("NONE");
 }
 
+struct GASPX_PositionSummary
+{
+   int direction;
+   int count;
+   double totalLots;
+   double averagePrice;
+   double floatingProfit;
+   double latestPrice;
+   bool simulated;
+};
+
 #endif
