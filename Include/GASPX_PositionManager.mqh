@@ -18,7 +18,7 @@ private:
    }
 
 public:
-   GASPX_PositionManager(void) { m_previousCount=-1; Clear(); }
+   GASPX_PositionManager(void) { m_previousCount=0; Clear(); }
 
    void Clear(void)
    {

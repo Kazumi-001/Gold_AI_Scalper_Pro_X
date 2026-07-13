@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.010] - 2026-07-14
+
+### Fixed
+
+- Spread now uses the broker's integer `MODE_SPREAD` value.
+- Spread equal to the configured maximum is consistently allowed.
+- Floating-point quote noise no longer marks 30-point spread as dangerous.
+- Initial flat Position Manager state no longer emits a false count-increase event.
+
+### Backtest evidence
+
+- Build 1.0.009 processed 23,641 completed-bar signals without runtime errors.
+- 23,633 signals were incorrectly blocked at the exact 30-point spread boundary.
+- Six recorded entries represent two appended runs; each run produced three virtual baskets.
+- Every virtual basket reached partial profit and ATR take-profit in the supplied log.
+
 ## [1.0.009] - 2026-07-14
 
 ### Added

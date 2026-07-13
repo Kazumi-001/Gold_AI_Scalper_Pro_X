@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.009"
-#property description "Gold AI Scalper Pro X - Build 1.0.009 Verification"
+#property version   "1.010"
+#property description "Gold AI Scalper Pro X - Build 1.0.010 Spread Fix"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"

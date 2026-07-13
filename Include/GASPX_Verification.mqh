@@ -22,6 +22,8 @@ public:
       Check("SYMBOL_GOLD",GASPX_IsGoldSymbol(),Symbol());
       Check("TIMEFRAME_M1",Period()==PERIOD_M1,IntegerToString(Period()));
       Check("POINT_VALID",Point>0.0,DoubleToString(Point,Digits));
+      Check("SPREAD_INTEGER_SOURCE",GASPX_CurrentSpreadPoints()>=0.0,
+            DoubleToString(GASPX_CurrentSpreadPoints(),1));
       Check("LOT_SEQUENCE",
             GASPX_LevelLots(0)==0.01 && GASPX_LevelLots(1)==0.02 &&
             GASPX_LevelLots(2)==0.03 && GASPX_LevelLots(3)==0.05 &&

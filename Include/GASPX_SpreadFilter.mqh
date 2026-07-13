@@ -3,7 +3,7 @@
 
 bool GASPX_SpreadAllowed()
 {
-   return(GASPX_CurrentSpreadPoints()<=InpMaxSpreadPoints);
+   return(GASPX_CurrentSpreadPoints()<=(double)InpMaxSpreadPoints+0.01);
 }
 
 #endif
