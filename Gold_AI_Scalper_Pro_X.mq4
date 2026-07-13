@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.006"
-#property description "Gold AI Scalper Pro X - Build 1.0.006 Position Manager"
+#property version   "1.007"
+#property description "Gold AI Scalper Pro X - Build 1.0.007 Dashboard"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"
@@ -18,6 +18,7 @@ bool g_riskAllowsTrading=true;
 #include "Include/GASPX_TradeEngine.mqh"
 #include "Include/GASPX_RiskManager.mqh"
 #include "Include/GASPX_PositionManager.mqh"
+#include "Include/GASPX_Dashboard.mqh"
 
 datetime g_lastSnapshot=0;
 datetime g_lastSignalBar=0;
@@ -25,6 +26,7 @@ GASPX_SignalResult g_lastSignal;
 GASPX_TradeEngine g_tradeEngine;
 GASPX_RiskManager g_riskManager;
 GASPX_PositionManager g_positionManager;
+GASPX_Dashboard g_dashboard;
 
 int OnInit()
 {
@@ -56,7 +58,7 @@ void OnDeinit(const int reason)
    EventKillTimer();
    g_logger.Event("DEINIT","Reason="+IntegerToString(reason));
    g_logger.Close();
-   Comment("");
+   g_dashboard.Clear();
 }
 
 void OnTick()
@@ -92,26 +94,5 @@ void GASPX_ProcessSnapshot()
    g_positionManager.Refresh(g_tradeEngine);
    GASPX_PositionSummary position=g_positionManager.Summary();
 
-   Comment(GASPX_NAME,"\n",
-           "Version ",GASPX_VERSION," / Build ",GASPX_BUILD,"\n",
-           "Mode: ",InpSimulationMode ? "SIMULATION" : "FRAMEWORK ONLY","\n",
-           "Spread: ",DoubleToString(snapshot.spreadPoints,1)," points\n",
-           "ATR(",InpAtrPeriod,"): ",DoubleToString(snapshot.atrPoints,1)," points\n",
-           "MarketScore: ",DoubleToString(snapshot.marketScore,1),"\n",
-           "DangerScore: ",DoubleToString(snapshot.dangerScore,1),"\n",
-           "State: ",GASPX_MarketStateText(snapshot.state));
-   if(g_lastSignalBar>0)
-      Comment(GASPX_NAME,"\n",
-              "Version ",GASPX_VERSION," / Build ",GASPX_BUILD,"\n",
-              "Mode: ",InpSimulationMode || !InpEnableLiveTrading ? "TRADE SIMULATION" : "LIVE TRADING","\n",
-              "MarketScore: ",DoubleToString(snapshot.marketScore,1),
-              "  DangerScore: ",DoubleToString(snapshot.dangerScore,1),"\n",
-              "BuyScore: ",g_lastSignal.buyScore,"  SellScore: ",g_lastSignal.sellScore,"\n",
-              "Signal: ",GASPX_SignalText(g_lastSignal.direction),
-              "  Confidence: ",g_lastSignal.confidence,"\n",
-              "Reason: ",g_lastSignal.reason,"\n",
-              "Risk: ",g_riskAllowsTrading ? "ACTIVE" : "BLOCKED","\n",
-              "Positions: ",position.count,"  Lots: ",DoubleToString(position.totalLots,2),"\n",
-              "Average: ",DoubleToString(position.averagePrice,Digits),
-              "  P/L: ",DoubleToString(position.floatingProfit,2));
+   g_dashboard.Render(snapshot,g_lastSignal,position,g_riskAllowsTrading);
 }

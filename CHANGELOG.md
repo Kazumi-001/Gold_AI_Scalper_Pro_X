@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.007] - 2026-07-14
+
+### Added
+
+- Dedicated Dashboard module.
+- Unified market, signal, basket and risk sections.
+- Simulation/live mode, spread, ATR, MarketScore and DangerScore display.
+- Buy/Sell scores, confidence and rejection reason display.
+- Position count, lots, average price and floating P/L display.
+- Configurable dashboard visibility and clean shutdown.
+
 ## [1.0.006] - 2026-07-14
 
 ### Added
