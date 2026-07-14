@@ -37,8 +37,14 @@ public:
       Check("SIMULATION_COSTS",InpSimulationCommissionPerLot>=0.0 && InpSimulationSlippagePoints>=0,
             DoubleToString(InpSimulationCommissionPerLot,2)+"/"+
             IntegerToString(InpSimulationSlippagePoints));
-      Check("LOSS_COOLDOWN",InpLossCooldownMinutes>=0 && InpLossCooldownMinutes<=1440,
+      Check("LOSS_COOLDOWN_DISABLED",InpLossCooldownMinutes==0,
             IntegerToString(InpLossCooldownMinutes));
+      Check("ENTRY_SCORE_ADAPTIVE",
+            !InpAdaptiveEntryScore ||
+            (InpLossPenalty1>=0 && InpLossPenalty2>=InpLossPenalty1 &&
+             InpSignalThreshold+InpLossPenalty2<=100),
+            IntegerToString(InpSignalThreshold)+"/"+
+            IntegerToString(InpLossPenalty1)+"/"+IntegerToString(InpLossPenalty2));
       Check("LIVE_DOUBLE_LOCK",InpSimulationMode || !InpEnableLiveTrading ||
             (!InpSimulationMode && InpEnableLiveTrading),
             InpSimulationMode ? "SIMULATION" : (InpEnableLiveTrading ? "LIVE_CONFIRMED" : "LIVE_DISABLED"));

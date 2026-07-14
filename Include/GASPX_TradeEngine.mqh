@@ -110,7 +110,7 @@ public:
      m_cumulativeProfit=0.0; m_grossProfit=0.0; m_grossLoss=0.0;
      m_peakCumulative=0.0; m_maxDrawdown=0.0; m_peakEquityProfit=0.0;
      m_maxEquityDrawdown=0.0; m_cumulativeCosts=0.0;
-   　 m_wins=0;m_losses=0;m_consecutiveLosses=0; m_basketId=0; m_entryTime=0; m_entryPrice=0.0;
+     m_wins=0; m_losses=0; m_consecutiveLosses=0; m_basketId=0; m_entryTime=0; m_entryPrice=0.0;
      m_maxBasketPositions=0;
      m_entryAdx=0.0; m_entryAtr=0.0; m_entryMarketScore=0.0; m_entryDangerScore=0.0;
      m_entryBuyScore=0; m_entrySellScore=0; m_entryConfidence=0;
@@ -128,6 +128,18 @@ public:
    double MaximumDrawdown(void) { return(m_maxDrawdown); }
    int WinningBaskets(void) { return(m_wins); }
    int LosingBaskets(void) { return(m_losses); }
+   int ConsecutiveLosses(void) { return(m_consecutiveLosses); }
+   int RequiredEntryScore(void)
+   {
+      int required=InpSignalThreshold;
+      if(InpAdaptiveEntryScore)
+      {
+         if(m_consecutiveLosses>=2) required+=InpLossPenalty2;
+         else if(m_consecutiveLosses==1) required+=InpLossPenalty1;
+      }
+      if(required>100) required=100;
+      return(required);
+   }
    datetime LossCooldownUntil(void) { return(m_lossCooldownUntil); }
    bool LossCooldownActive(void) { return(TimeCurrent()<m_lossCooldownUntil); }
    double VirtualInitialPrice(void) { return(m_entryPrice); }
@@ -172,14 +184,24 @@ public:
          m_basketRealized+=realized;
          m_cumulativeProfit+=realized;
          m_cumulativeCosts+=commission+slippage;
-         if(m_basketRealized>0.0) { m_grossProfit+=m_basketRealized; m_wins++; }
+         if(m_basketRealized>0.0)
+         {
+            m_grossProfit+=m_basketRealized;
+            m_wins++;
+            m_consecutiveLosses=0;
+         }
          else if(m_basketRealized<0.0)
          {
-            m_grossLoss+=-m_basketRealized; m_losses++;
-            m_lossCooldownUntil=TimeCurrent()+InpLossCooldownMinutes*60;
-            g_logger.Risk("LOSS_COOLDOWN",InpLossCooldownMinutes,
-                          "basket_id="+IntegerToString(m_basketId)+
-                          ",until="+TimeToString(m_lossCooldownUntil,TIME_DATE|TIME_MINUTES));
+            m_grossLoss+=-m_basketRealized;
+            m_losses++;
+            m_consecutiveLosses++;
+            if(InpLossCooldownMinutes>0)
+            {
+               m_lossCooldownUntil=TimeCurrent()+InpLossCooldownMinutes*60;
+               g_logger.Risk("LOSS_COOLDOWN",InpLossCooldownMinutes,
+                             "basket_id="+IntegerToString(m_basketId)+
+                             ",until="+TimeToString(m_lossCooldownUntil,TIME_DATE|TIME_MINUTES));
+            }
          }
          UpdateDrawdown();
          LogPerformance("BASKET_CLOSE",realized,grossRealized,commission,slippage,reason);
@@ -219,6 +241,16 @@ public:
    {
       if(!g_riskAllowsTrading || LossCooldownActive() ||
          signal.direction==GASPX_SIGNAL_NONE || !CooldownPassed()) return;
+
+      int requiredScore=RequiredEntryScore();
+      if(signal.confidence<requiredScore)
+      {
+         g_logger.Risk("ADAPTIVE_ENTRY_BLOCK",requiredScore,
+                       "confidence="+IntegerToString(signal.confidence)+
+                       ",consecutive_losses="+IntegerToString(m_consecutiveLosses));
+         return;
+      }
+
       int direction=(int)signal.direction;
       int type=(direction>0 ? OP_BUY : OP_SELL);
       int opposite=(direction>0 ? OP_SELL : OP_BUY);

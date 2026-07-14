@@ -3,7 +3,7 @@
 
 #define GASPX_NAME          "Gold AI Scalper Pro X"
 #define GASPX_VERSION       "1.0"
-#define GASPX_BUILD         "1.0.018"
+#define GASPX_BUILD         "1.0.019"
 #define GASPX_MAGIC_DEFAULT 777
 
 input bool   InpSimulationMode = true;
@@ -50,7 +50,10 @@ input int    InpMinimumHistoryBars = 250;
 input bool   InpRunStartupSelfTest = true;
 input double InpSimulationCommissionPerLot = 7.0;
 input int    InpSimulationSlippagePoints = 5;
-input int    InpLossCooldownMinutes = 30;
+input int    InpLossCooldownMinutes = 0;
+input bool   InpAdaptiveEntryScore = true;
+input int    InpLossPenalty1 = 5;
+input int    InpLossPenalty2 = 10;
 
 bool GASPX_ValidateInputs(string &reason)
 {
@@ -86,6 +89,9 @@ bool GASPX_ValidateInputs(string &reason)
    { reason="Simulation transaction costs must not be negative"; return(false); }
    if(InpLossCooldownMinutes<0 || InpLossCooldownMinutes>1440)
    { reason="LossCooldownMinutes must be 0..1440"; return(false); }
+   if(InpLossPenalty1<0 || InpLossPenalty2<InpLossPenalty1 ||
+      InpSignalThreshold+InpLossPenalty2>100)
+   { reason="Adaptive entry penalties are invalid"; return(false); }
    reason="";
    return(true);
 }

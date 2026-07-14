@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.018"
-#property description "Gold AI Scalper Pro X - Build 1.0.018 Loss Cooldown"
+#property version   "1.019"
+#property description "Gold AI Scalper Pro X - Build 1.0.019 Adaptive Entry Score"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"

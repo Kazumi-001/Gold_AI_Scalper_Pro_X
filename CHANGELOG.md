@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.0.019] - 2026-07-14
+
+### Changed
+
+- Disabled the rejected Build 1.0.018 post-loss time cooldown by default.
+- Preserved the Build 1.0.015 three-position, average-price ATR-stop baseline.
+
+### Added
+
+- Adaptive entry threshold based on consecutive losing baskets.
+- Required signal score is increased by 5 after one loss and by 10 after two or more losses.
+- A profitable completed basket resets the consecutive-loss counter.
+- `ADAPTIVE_ENTRY_BLOCK` logging includes required score, current confidence and loss count.
+- Startup verification for adaptive-entry parameters.
+
+### Purpose
+
+- Test one entry-quality change without altering grid, ATR exits, position cap or virtual-equity risk controls.
+
 ## [1.0.018] - 2026-07-14
 
 ### Changed
