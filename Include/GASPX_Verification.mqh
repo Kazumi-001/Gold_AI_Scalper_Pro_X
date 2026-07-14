@@ -45,6 +45,9 @@ public:
              InpSignalThreshold+InpLossPenalty2<=100),
             IntegerToString(InpSignalThreshold)+"/"+
             IntegerToString(InpLossPenalty1)+"/"+IntegerToString(InpLossPenalty2));
+      Check("MAX_ENTRY_ATR",
+            InpMaximumEntryAtrPoints>0.0 && InpMaximumEntryAtrPoints<=InpAtrHighPoints,
+            DoubleToString(InpMaximumEntryAtrPoints,1));
       Check("LIVE_DOUBLE_LOCK",InpSimulationMode || !InpEnableLiveTrading ||
             (!InpSimulationMode && InpEnableLiveTrading),
             InpSimulationMode ? "SIMULATION" : (InpEnableLiveTrading ? "LIVE_CONFIRMED" : "LIVE_DISABLED"));

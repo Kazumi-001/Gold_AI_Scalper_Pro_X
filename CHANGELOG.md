@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.021] - 2026-07-15
+
+### Added
+
+- High-volatility initial-entry filter.
+- New initial entries are blocked when entry ATR exceeds 400 points.
+- `HIGH_ATR_ENTRY_BLOCK` logging and startup verification.
+
+### Unchanged
+
+- Grid, ATR exits, position cap, adaptive score and risk controls.
+
 ## [1.0.020] - 2026-07-14
 
 ### Changed

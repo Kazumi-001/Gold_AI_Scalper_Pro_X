@@ -242,6 +242,14 @@ public:
       if(!g_riskAllowsTrading || LossCooldownActive() ||
          signal.direction==GASPX_SIGNAL_NONE || !CooldownPassed()) return;
 
+      if(signal.atrPoints>InpMaximumEntryAtrPoints)
+      {
+         g_logger.Risk("HIGH_ATR_ENTRY_BLOCK",(int)signal.atrPoints,
+                       "atr_points="+DoubleToString(signal.atrPoints,1)+
+                       ",maximum="+DoubleToString(InpMaximumEntryAtrPoints,1));
+         return;
+      }
+
       int requiredScore=RequiredEntryScore();
       if(signal.confidence<requiredScore)
       {
