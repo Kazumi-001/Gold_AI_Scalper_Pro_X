@@ -96,6 +96,29 @@ public:
       FileFlush(m_handle);
    }
 
+   void Performance(const string action,const double realized,const double basketProfit,
+                    const double cumulative,const double grossProfit,const double grossLoss,
+                    const double profitFactor,const double maxDrawdown,
+                    const int wins,const int losses,const string details)
+   {
+      if(!m_enabled || m_handle==INVALID_HANDLE) return;
+      string pf=(grossLoss>0.0 ? DoubleToString(profitFactor,3) : "INF");
+      string payload="action="+action+
+                     ",realized="+DoubleToString(realized,2)+
+                     ",basket_profit="+DoubleToString(basketProfit,2)+
+                     ",cumulative="+DoubleToString(cumulative,2)+
+                     ",gross_profit="+DoubleToString(grossProfit,2)+
+                     ",gross_loss="+DoubleToString(grossLoss,2)+
+                     ",profit_factor="+pf+
+                     ",max_drawdown="+DoubleToString(maxDrawdown,2)+
+                     ",wins="+IntegerToString(wins)+
+                     ",losses="+IntegerToString(losses)+
+                     ",details="+details;
+      FileWrite(m_handle,TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS),"PERFORMANCE",Symbol(),
+                DoubleToString(Bid,Digits),DoubleToString(Ask,Digits),"","","","","",payload);
+      FileFlush(m_handle);
+   }
+
    void Position(const GASPX_PositionSummary &p,const string action)
    {
       if(!m_enabled || m_handle==INVALID_HANDLE) return;

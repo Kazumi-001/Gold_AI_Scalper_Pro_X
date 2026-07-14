@@ -9,9 +9,41 @@ private:
    double m_virtualLastPrice;
    double m_virtualAveragePrice;
    double m_virtualTotalLots;
+   double m_basketRealized;
+   double m_cumulativeProfit;
+   double m_grossProfit;
+   double m_grossLoss;
+   double m_peakCumulative;
+   double m_maxDrawdown;
+   int m_wins;
+   int m_losses;
    datetime m_lastAction;
 
    bool IsSimulation(void) { return(InpSimulationMode || !InpEnableLiveTrading); }
+
+   double ProfitForLots(const int direction,const double openPrice,
+                        const double closePrice,const double lots)
+   {
+      double tickSize=MarketInfo(Symbol(),MODE_TICKSIZE);
+      double tickValue=MarketInfo(Symbol(),MODE_TICKVALUE);
+      if(tickSize<=0.0 || tickValue<=0.0 || direction==0 || lots<=0.0) return(0.0);
+      return(((closePrice-openPrice)*direction/tickSize)*tickValue*lots);
+   }
+
+   void UpdateDrawdown(void)
+   {
+      if(m_cumulativeProfit>m_peakCumulative) m_peakCumulative=m_cumulativeProfit;
+      double drawdown=m_peakCumulative-m_cumulativeProfit;
+      if(drawdown>m_maxDrawdown) m_maxDrawdown=drawdown;
+   }
+
+   void LogPerformance(const string action,const double realized,const string reason)
+   {
+      double pf=(m_grossLoss>0.0 ? m_grossProfit/m_grossLoss : 0.0);
+      g_logger.Performance(action,realized,m_basketRealized,m_cumulativeProfit,
+                           m_grossProfit,m_grossLoss,pf,m_maxDrawdown,
+                           m_wins,m_losses,reason);
+   }
 
    double GridDistancePoints(void)
    {
@@ -46,29 +78,56 @@ private:
 public:
    GASPX_TradeEngine(void)
    { m_virtualDirection=0; m_virtualCount=0; m_virtualLastPrice=0.0;
-     m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_lastAction=0; }
+     m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_basketRealized=0.0;
+     m_cumulativeProfit=0.0; m_grossProfit=0.0; m_grossLoss=0.0;
+     m_peakCumulative=0.0; m_maxDrawdown=0.0; m_wins=0; m_losses=0; m_lastAction=0; }
 
    int VirtualDirection(void) { return(m_virtualDirection); }
    int VirtualCount(void) { return(m_virtualCount); }
    double VirtualAveragePrice(void) { return(m_virtualAveragePrice); }
    double VirtualTotalLots(void) { return(m_virtualTotalLots); }
+   double CumulativeProfit(void) { return(m_cumulativeProfit); }
+   double GrossProfit(void) { return(m_grossProfit); }
+   double GrossLoss(void) { return(m_grossLoss); }
+   double ProfitFactor(void) { return(m_grossLoss>0.0 ? m_grossProfit/m_grossLoss : 0.0); }
+   double MaximumDrawdown(void) { return(m_maxDrawdown); }
+   int WinningBaskets(void) { return(m_wins); }
+   int LosingBaskets(void) { return(m_losses); }
 
    void ResetVirtual(const string reason)
    {
       if(m_virtualCount>0)
+      {
+         double exitPrice=m_virtualDirection>0 ? Bid : Ask;
+         double realized=ProfitForLots(m_virtualDirection,m_virtualAveragePrice,
+                                       exitPrice,m_virtualTotalLots);
          g_logger.Trade("BASKET_CLOSE",m_virtualDirection,m_virtualTotalLots,
-                        m_virtualDirection>0 ? Bid : Ask,m_virtualCount-1,true,reason);
+                        exitPrice,m_virtualCount-1,true,reason);
+         m_basketRealized+=realized;
+         m_cumulativeProfit+=realized;
+         if(m_basketRealized>0.0) { m_grossProfit+=m_basketRealized; m_wins++; }
+         else if(m_basketRealized<0.0) { m_grossLoss+=-m_basketRealized; m_losses++; }
+         UpdateDrawdown();
+         LogPerformance("BASKET_CLOSE",realized,reason);
+      }
       m_virtualDirection=0; m_virtualCount=0; m_virtualLastPrice=0.0;
-      m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_lastAction=TimeCurrent();
+      m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_basketRealized=0.0;
+      m_lastAction=TimeCurrent();
    }
 
    void PartialVirtual(const string reason)
    {
       if(m_virtualCount<=0 || m_virtualTotalLots<=0.0) return;
       double closed=m_virtualTotalLots*(InpPartialClosePercent/100.0);
+      double exitPrice=m_virtualDirection>0 ? Bid : Ask;
+      double realized=ProfitForLots(m_virtualDirection,m_virtualAveragePrice,exitPrice,closed);
       m_virtualTotalLots-=closed;
       g_logger.Trade("PARTIAL_CLOSE",m_virtualDirection,closed,
-                     m_virtualDirection>0 ? Bid : Ask,m_virtualCount-1,true,reason);
+                     exitPrice,m_virtualCount-1,true,reason);
+      m_basketRealized+=realized;
+      m_cumulativeProfit+=realized;
+      UpdateDrawdown();
+      LogPerformance("PARTIAL_CLOSE",realized,reason);
    }
 
    void OnSignal(const GASPX_SignalResult &signal)
@@ -81,6 +140,7 @@ public:
       if(IsSimulation())
       {
          if(m_virtualCount>0) return;
+         m_basketRealized=0.0;
          RefreshRates();
          RecordSimulation("INITIAL",direction,0,direction>0 ? Ask : Bid);
          return;

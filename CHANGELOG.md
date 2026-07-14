@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.011] - 2026-07-14
+
+### Added
+
+- Realized profit recording for simulated partial and basket closes.
+- Cumulative simulated profit across completed baskets.
+- Basket-level gross profit, gross loss, wins and losses.
+- Profit factor and maximum cumulative-profit drawdown.
+- `PERFORMANCE` CSV events with auditable accounting fields.
+
+### Accounting
+
+- Partial-close profit is included in the final basket result without double counting.
+- Profit factor is calculated from completed basket results.
+- Maximum drawdown is measured in account currency from the cumulative-profit peak.
+
 ## [1.0.010] - 2026-07-14
 
 ### Fixed
