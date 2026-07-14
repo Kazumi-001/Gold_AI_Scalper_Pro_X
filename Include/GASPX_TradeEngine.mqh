@@ -20,6 +20,7 @@ private:
    double m_cumulativeCosts;
    int m_wins;
    int m_losses;
+   int m_consecutiveLosses;
    int m_basketId;
    datetime m_entryTime;
    double m_entryPrice;
@@ -109,7 +110,7 @@ public:
      m_cumulativeProfit=0.0; m_grossProfit=0.0; m_grossLoss=0.0;
      m_peakCumulative=0.0; m_maxDrawdown=0.0; m_peakEquityProfit=0.0;
      m_maxEquityDrawdown=0.0; m_cumulativeCosts=0.0;
-     m_wins=0; m_losses=0; m_basketId=0; m_entryTime=0; m_entryPrice=0.0;
+   　 m_wins=0;m_losses=0;m_consecutiveLosses=0; m_basketId=0; m_entryTime=0; m_entryPrice=0.0;
      m_maxBasketPositions=0;
      m_entryAdx=0.0; m_entryAtr=0.0; m_entryMarketScore=0.0; m_entryDangerScore=0.0;
      m_entryBuyScore=0; m_entrySellScore=0; m_entryConfidence=0;
