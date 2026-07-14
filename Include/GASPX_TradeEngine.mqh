@@ -124,14 +124,19 @@ public:
    int WinningBaskets(void) { return(m_wins); }
    int LosingBaskets(void) { return(m_losses); }
 
-   void TrackVirtualEquity(const double floatingProfit)
+   double NetVirtualProfit(const double grossFloating)
    {
-      if(!IsSimulation()) return;
       double liquidationCosts=0.0;
       if(m_virtualCount>0 && m_virtualTotalLots>0.0)
          liquidationCosts=m_virtualTotalLots*InpSimulationCommissionPerLot+
                           SlippageCostForLots(m_virtualTotalLots);
-      double netFloating=floatingProfit-liquidationCosts;
+      return(grossFloating-liquidationCosts);
+   }
+
+   void TrackVirtualEquity(const double floatingProfit)
+   {
+      if(!IsSimulation()) return;
+      double netFloating=NetVirtualProfit(floatingProfit);
       double equityProfit=m_cumulativeProfit+netFloating;
       if(equityProfit>m_peakEquityProfit) m_peakEquityProfit=equityProfit;
       double drawdown=m_peakEquityProfit-equityProfit;

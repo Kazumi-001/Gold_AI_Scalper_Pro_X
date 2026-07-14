@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.0.015] - 2026-07-14
+
+### Changed
+
+- Default and XM simulation preset maximum positions reduced from six to three.
+- Simulation Mode daily-loss calculations now use virtual equity.
+- Simulation Mode maximum-drawdown calculations now use peak virtual equity.
+- Basket percentage exits use estimated net liquidation profit after transaction costs.
+
+### Added
+
+- Risk-limit CSV events include virtual equity, daily loss percentage and drawdown percentage.
+- Daily virtual-equity baseline resets at the start of each broker day.
+
+### Evidence
+
+- Four-or-more-position baskets lost 566.78 in the July diagnostic sample.
+- Four-or-more-position baskets lost 4,760.07 in the independent June sample.
+- The former Simulation Mode risk check referenced unchanged MT4 account equity and therefore did not enforce the configured virtual limits.
+
 ## [1.0.014] - 2026-07-14
 
 ### Added

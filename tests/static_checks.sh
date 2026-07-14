@@ -5,8 +5,8 @@ test -f Gold_AI_Scalper_Pro_X.mq4
 test -f Include/GASPX_Config.mqh
 test -f Include/GASPX_Verification.mqh
 grep -q '#property strict' Gold_AI_Scalper_Pro_X.mq4
-grep -q '#property version   "1.014"' Gold_AI_Scalper_Pro_X.mq4
-grep -q '#define GASPX_BUILD         "1.0.014"' Include/GASPX_Config.mqh
+grep -q '#property version   "1.015"' Gold_AI_Scalper_Pro_X.mq4
+grep -q '#define GASPX_BUILD         "1.0.015"' Include/GASPX_Config.mqh
 grep -q 'MarketInfo(Symbol(),MODE_SPREAD)' Include/GASPX_Market.mqh
 grep -q 'void Performance(' Include/GASPX_Logger.mqh
 grep -q 'm_cumulativeProfit' Include/GASPX_TradeEngine.mqh
@@ -21,6 +21,10 @@ grep -q 'SlippageCostForLots' Include/GASPX_TradeEngine.mqh
 grep -q 'void Diagnostic(' Include/GASPX_Logger.mqh
 grep -q 'basket_id=' Include/GASPX_Logger.mqh
 grep -q 'm_entryAdx=signal.adx' Include/GASPX_TradeEngine.mqh
+grep -q 'InpMaxPositions      = 3' Include/GASPX_Config.mqh
+grep -q 'InpMaxPositions=3' Presets/XM_XAUUSD_M1_Simulation.set
+grep -q 'm_virtualPeakEquity' Include/GASPX_RiskManager.mqh
+grep -q 'riskEquity=balance+trade.CumulativeProfit()+basket' Include/GASPX_RiskManager.mqh
 grep -q 'InpSimulationMode = true' Include/GASPX_Config.mqh
 grep -q 'InpEnableLiveTrading = false' Include/GASPX_Config.mqh
 test "$(grep -R -l 'OrderSend(' Include | tr '\n' ' ')" = "Include/GASPX_OrderEngine.mqh "

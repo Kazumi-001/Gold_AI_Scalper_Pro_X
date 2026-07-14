@@ -5,6 +5,7 @@ class GASPX_RiskManager
 {
 private:
    double m_dayStartBalance;
+   double m_virtualPeakEquity;
    int m_dayOfYear;
    bool m_virtualPartialDone;
    int m_partialTickets[100];
@@ -117,39 +118,58 @@ private:
 
 public:
    GASPX_RiskManager(void)
-   { m_dayStartBalance=0.0; m_dayOfYear=-1; m_virtualPartialDone=false; m_partialCount=0; }
+   { m_dayStartBalance=0.0; m_virtualPeakEquity=0.0;
+     m_dayOfYear=-1; m_virtualPartialDone=false; m_partialCount=0; }
 
    void Initialize(void)
-   { m_dayStartBalance=AccountBalance(); m_dayOfYear=TimeDayOfYear(TimeCurrent()); g_riskAllowsTrading=true; }
+   { m_dayStartBalance=AccountBalance(); m_virtualPeakEquity=AccountBalance();
+     m_dayOfYear=TimeDayOfYear(TimeCurrent()); g_riskAllowsTrading=true; }
 
    void Process(GASPX_TradeEngine &trade)
    {
+      bool simulation=IsSimulation();
+      double balance=MathMax(1.0,AccountBalance());
+      double basket=simulation ? VirtualProfit(trade) : LiveBasketProfit();
+      double riskEquity=AccountEquity();
+      if(simulation)
+      {
+         basket=trade.NetVirtualProfit(basket);
+         riskEquity=balance+trade.CumulativeProfit()+basket;
+         if(riskEquity>m_virtualPeakEquity) m_virtualPeakEquity=riskEquity;
+         trade.TrackVirtualEquity(VirtualProfit(trade));
+      }
+
       int today=TimeDayOfYear(TimeCurrent());
       if(today!=m_dayOfYear)
-      { m_dayOfYear=today; m_dayStartBalance=AccountBalance(); g_riskAllowsTrading=true; m_virtualPartialDone=false; }
+      { m_dayOfYear=today; m_dayStartBalance=riskEquity; g_riskAllowsTrading=true; m_virtualPartialDone=false; }
 
-      double balance=MathMax(1.0,AccountBalance());
-      double dailyLoss=(m_dayStartBalance-AccountEquity())/MathMax(1.0,m_dayStartBalance)*100.0;
-      double drawdown=(balance-AccountEquity())/balance*100.0;
+      double dailyLoss=(m_dayStartBalance-riskEquity)/MathMax(1.0,m_dayStartBalance)*100.0;
+      double peakEquity=simulation ? MathMax(1.0,m_virtualPeakEquity) : balance;
+      double drawdown=(peakEquity-riskEquity)/peakEquity*100.0;
       if(dailyLoss>=InpDailyLossLimitPercent || drawdown>=InpMaximumDrawdownPercent)
       {
-         g_riskAllowsTrading=false;
          string reason=dailyLoss>=InpDailyLossLimitPercent ? "DAILY_LOSS_LIMIT" : "DRAWDOWN_LIMIT";
-         if(IsSimulation()) trade.ResetVirtual(reason); else CloseAllLive(reason);
+         if(g_riskAllowsTrading)
+         {
+            g_logger.Risk(reason,reason=="DAILY_LOSS_LIMIT" ? dailyLoss : drawdown,
+                          "equity="+DoubleToString(riskEquity,2)+
+                          ",daily_loss="+DoubleToString(dailyLoss,2)+
+                          ",drawdown="+DoubleToString(drawdown,2));
+            if(simulation) trade.ResetVirtual(reason); else CloseAllLive(reason);
+         }
+         g_riskAllowsTrading=false;
          return;
       }
 
-      double basket=IsSimulation() ? VirtualProfit(trade) : LiveBasketProfit();
-      if(IsSimulation()) trade.TrackVirtualEquity(basket);
       double basketPercent=basket/balance*100.0;
       if(basketPercent>=InpBasketProfitPercent || basketPercent<=-InpBasketLossPercent)
       {
          string reason=basketPercent>=InpBasketProfitPercent ? "BASKET_PROFIT" : "BASKET_LOSS";
-         if(IsSimulation()) trade.ResetVirtual(reason); else CloseAllLive(reason);
+         if(simulation) trade.ResetVirtual(reason); else CloseAllLive(reason);
          return;
       }
 
-      if(IsSimulation())
+      if(simulation)
       {
          double atr=CurrentAtr();
          if(trade.VirtualCount()<=0 || atr<=0.0) { m_virtualPartialDone=false; return; }

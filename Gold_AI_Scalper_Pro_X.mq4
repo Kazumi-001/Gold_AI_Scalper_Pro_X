@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.014"
-#property description "Gold AI Scalper Pro X - Build 1.0.014 Basket Diagnostics"
+#property version   "1.015"
+#property description "Gold AI Scalper Pro X - Build 1.0.015 Grid Cap and Virtual Risk"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"
