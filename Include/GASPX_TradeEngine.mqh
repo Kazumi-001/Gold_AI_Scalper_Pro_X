@@ -20,6 +20,16 @@ private:
    double m_cumulativeCosts;
    int m_wins;
    int m_losses;
+   int m_basketId;
+   datetime m_entryTime;
+   int m_maxBasketPositions;
+   double m_entryAdx;
+   double m_entryAtr;
+   double m_entryMarketScore;
+   double m_entryDangerScore;
+   int m_entryBuyScore;
+   int m_entrySellScore;
+   int m_entryConfidence;
    datetime m_lastAction;
 
    bool IsSimulation(void) { return(InpSimulationMode || !InpEnableLiveTrading); }
@@ -81,6 +91,7 @@ private:
       g_logger.Trade(action,direction,lots,price,level,true,"VIRTUAL");
       m_virtualDirection=direction;
       m_virtualCount=level+1;
+      if(m_virtualCount>m_maxBasketPositions) m_maxBasketPositions=m_virtualCount;
       m_virtualLastPrice=price;
       double previousLots=m_virtualTotalLots;
       m_virtualTotalLots+=lots;
@@ -96,7 +107,9 @@ public:
      m_cumulativeProfit=0.0; m_grossProfit=0.0; m_grossLoss=0.0;
      m_peakCumulative=0.0; m_maxDrawdown=0.0; m_peakEquityProfit=0.0;
      m_maxEquityDrawdown=0.0; m_cumulativeCosts=0.0;
-     m_wins=0; m_losses=0; m_lastAction=0; }
+     m_wins=0; m_losses=0; m_basketId=0; m_entryTime=0; m_maxBasketPositions=0;
+     m_entryAdx=0.0; m_entryAtr=0.0; m_entryMarketScore=0.0; m_entryDangerScore=0.0;
+     m_entryBuyScore=0; m_entrySellScore=0; m_entryConfidence=0; m_lastAction=0; }
      
 
    int VirtualDirection(void) { return(m_virtualDirection); }
@@ -149,9 +162,15 @@ public:
          else if(m_basketRealized<0.0) { m_grossLoss+=-m_basketRealized; m_losses++; }
          UpdateDrawdown();
          LogPerformance("BASKET_CLOSE",realized,grossRealized,commission,slippage,reason);
+         g_logger.Diagnostic(m_basketId,m_virtualDirection,m_entryTime,
+                             (int)MathMax(0,TimeCurrent()-m_entryTime),m_maxBasketPositions,
+                             m_entryAdx,m_entryAtr,m_entryMarketScore,m_entryDangerScore,
+                             m_entryBuyScore,m_entrySellScore,m_entryConfidence,
+                             m_basketRealized,reason);
       }
       m_virtualDirection=0; m_virtualCount=0; m_virtualLastPrice=0.0;
       m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_basketRealized=0.0;
+      m_entryTime=0; m_maxBasketPositions=0;
       m_lastAction=TimeCurrent();
       TrackVirtualEquity(0.0);
    }
@@ -186,6 +205,16 @@ public:
       {
          if(m_virtualCount>0) return;
          m_basketRealized=0.0;
+         m_basketId++;
+         m_entryTime=TimeCurrent();
+         m_maxBasketPositions=0;
+         m_entryAdx=signal.adx;
+         m_entryAtr=signal.atrPoints;
+         m_entryMarketScore=signal.marketScore;
+         m_entryDangerScore=signal.dangerScore;
+         m_entryBuyScore=signal.buyScore;
+         m_entrySellScore=signal.sellScore;
+         m_entryConfidence=signal.confidence;
          RefreshRates();
          RecordSimulation("INITIAL",direction,0,direction>0 ? Ask : Bid);
          return;

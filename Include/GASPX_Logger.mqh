@@ -61,6 +61,10 @@ public:
                      ",buy="+IntegerToString(s.buyScore)+
                      ",sell="+IntegerToString(s.sellScore)+
                      ",confidence="+IntegerToString(s.confidence)+
+                     ",adx="+DoubleToString(s.adx,1)+
+                     ",atr="+DoubleToString(s.atrPoints,1)+
+                     ",market_score="+DoubleToString(s.marketScore,1)+
+                     ",danger_score="+DoubleToString(s.dangerScore,1)+
                      ",spread="+(s.spreadAllowed ? "1" : "0")+
                      ",session="+(s.sessionAllowed ? "1" : "0")+
                      ",market="+(s.marketAllowed ? "1" : "0")+
@@ -155,6 +159,36 @@ public:
                      ",profit="+DoubleToString(p.floatingProfit,2)+
                      ",mode="+(p.simulated ? "SIMULATION" : "LIVE");
       FileWrite(m_handle,TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS),"POSITION",Symbol(),
+                DoubleToString(Bid,Digits),DoubleToString(Ask,Digits),"","","","","",payload);
+      FileFlush(m_handle);
+   }
+
+   void Diagnostic(const int basketId,const int direction,const datetime entryTime,
+                   const int durationSeconds,const int maxPositions,
+                   const double entryAdx,const double entryAtr,const double entryMarketScore,
+                   const double entryDangerScore,const int buyScore,const int sellScore,
+                   const int confidence,const double netProfit,const string exitReason)
+   {
+      if(!m_enabled || m_handle==INVALID_HANDLE) return;
+      string side=(direction>0 ? "BUY" : "SELL");
+      string outcome=(netProfit>0.0 ? "WIN" : (netProfit<0.0 ? "LOSS" : "FLAT"));
+      string payload="basket_id="+IntegerToString(basketId)+
+                     ",side="+side+
+                     ",entry_time="+TimeToString(entryTime,TIME_DATE|TIME_MINUTES)+
+                     ",entry_hour="+IntegerToString(TimeHour(entryTime))+
+                     ",duration_seconds="+IntegerToString(durationSeconds)+
+                     ",max_positions="+IntegerToString(maxPositions)+
+                     ",entry_adx="+DoubleToString(entryAdx,1)+
+                     ",entry_atr="+DoubleToString(entryAtr,1)+
+                     ",entry_market_score="+DoubleToString(entryMarketScore,1)+
+                     ",entry_danger_score="+DoubleToString(entryDangerScore,1)+
+                     ",buy_score="+IntegerToString(buyScore)+
+                     ",sell_score="+IntegerToString(sellScore)+
+                     ",confidence="+IntegerToString(confidence)+
+                     ",net_profit="+DoubleToString(netProfit,2)+
+                     ",outcome="+outcome+
+                     ",exit_reason="+exitReason;
+      FileWrite(m_handle,TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS),"DIAGNOSTIC",Symbol(),
                 DoubleToString(Bid,Digits),DoubleToString(Ask,Digits),"","","","","",payload);
       FileFlush(m_handle);
    }

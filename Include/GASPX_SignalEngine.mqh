@@ -9,6 +9,10 @@ void GASPX_EvaluateSignal(const GASPX_MarketSnapshot &market,GASPX_SignalResult 
    result.buyScore=GASPX_DirectionScore(1,shift);
    result.sellScore=GASPX_DirectionScore(-1,shift);
    result.confidence=(result.buyScore>result.sellScore ? result.buyScore : result.sellScore);
+   result.adx=iADX(Symbol(),PERIOD_M1,InpAdxPeriod,PRICE_CLOSE,MODE_MAIN,shift);
+   result.atrPoints=market.atrPoints;
+   result.marketScore=market.marketScore;
+   result.dangerScore=market.dangerScore;
    result.spreadAllowed=GASPX_SpreadAllowed();
    result.sessionAllowed=GASPX_SessionAllowed(TimeCurrent());
    result.marketAllowed=(market.marketScore>=InpMinimumMarketScore &&

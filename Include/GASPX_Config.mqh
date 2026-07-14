@@ -3,7 +3,7 @@
 
 #define GASPX_NAME          "Gold AI Scalper Pro X"
 #define GASPX_VERSION       "1.0"
-#define GASPX_BUILD         "1.0.013"
+#define GASPX_BUILD         "1.0.014"
 #define GASPX_MAGIC_DEFAULT 777
 
 input bool   InpSimulationMode = true;

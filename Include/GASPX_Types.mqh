@@ -53,6 +53,10 @@ struct GASPX_SignalResult
    int buyScore;
    int sellScore;
    int confidence;
+   double adx;
+   double atrPoints;
+   double marketScore;
+   double dangerScore;
    bool spreadAllowed;
    bool sessionAllowed;
    bool marketAllowed;

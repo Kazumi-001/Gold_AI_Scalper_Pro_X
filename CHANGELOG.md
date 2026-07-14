@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.014] - 2026-07-14
+
+### Added
+
+- Unique sequential basket identifiers for each simulation run.
+- Entry-time ADX, ATR, MarketScore, DangerScore, directional scores and hour.
+- Maximum grid/position depth and basket holding duration.
+- Completed-basket net result, outcome and exit reason in one `DIAGNOSTIC` row.
+- Entry-regime values in regular `SIGNAL` CSV rows.
+
+### Purpose
+
+- Identify market regimes associated with weak or losing baskets before changing strategy rules.
+- Enable grouped analysis by ADX, ATR, hour, direction and grid depth without reconstructing basket state.
+
 ## [1.0.013] - 2026-07-14
 
 ### Added
