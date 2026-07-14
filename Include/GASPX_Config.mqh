@@ -3,7 +3,7 @@
 
 #define GASPX_NAME          "Gold AI Scalper Pro X"
 #define GASPX_VERSION       "1.0"
-#define GASPX_BUILD         "1.0.019"
+#define GASPX_BUILD         "1.0.020"
 #define GASPX_MAGIC_DEFAULT 777
 
 input bool   InpSimulationMode = true;
@@ -52,8 +52,8 @@ input double InpSimulationCommissionPerLot = 7.0;
 input int    InpSimulationSlippagePoints = 5;
 input int    InpLossCooldownMinutes = 0;
 input bool   InpAdaptiveEntryScore = true;
-input int    InpLossPenalty1 = 5;
-input int    InpLossPenalty2 = 10;
+input int    InpLossPenalty1 = 2;
+input int    InpLossPenalty2 = 4;
 
 bool GASPX_ValidateInputs(string &reason)
 {

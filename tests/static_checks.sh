@@ -5,8 +5,8 @@ test -f Gold_AI_Scalper_Pro_X.mq4
 test -f Include/GASPX_Config.mqh
 test -f Include/GASPX_Verification.mqh
 grep -q '#property strict' Gold_AI_Scalper_Pro_X.mq4
-grep -q '#property version   "1.019"' Gold_AI_Scalper_Pro_X.mq4
-grep -q '#define GASPX_BUILD         "1.0.019"' Include/GASPX_Config.mqh
+grep -q '#property version   "1.020"' Gold_AI_Scalper_Pro_X.mq4
+grep -q '#define GASPX_BUILD         "1.0.020"' Include/GASPX_Config.mqh
 grep -q 'MarketInfo(Symbol(),MODE_SPREAD)' Include/GASPX_Market.mqh
 grep -q 'void Performance(' Include/GASPX_Logger.mqh
 grep -q 'm_cumulativeProfit' Include/GASPX_TradeEngine.mqh

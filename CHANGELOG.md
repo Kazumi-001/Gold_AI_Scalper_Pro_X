@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.020] - 2026-07-14
+
+### Changed
+
+- Reduced adaptive entry penalties from 5/10 to 2/4.
+- No other strategy logic changed.
+
+### Purpose
+
+- Retain more valid entries while preserving the consecutive-loss quality filter.
+
 ## [1.0.019] - 2026-07-14
 
 ### Changed

@@ -30,5 +30,5 @@ InpSimulationCommissionPerLot=7.0
 InpSimulationSlippagePoints=5
 InpLossCooldownMinutes=0
 InpAdaptiveEntryScore=true
-InpLossPenalty1=5
-InpLossPenalty2=10
+InpLossPenalty1=2
+InpLossPenalty2=4
