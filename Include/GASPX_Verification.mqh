@@ -34,6 +34,9 @@ public:
             IntegerToString(InpSignalThreshold));
       Check("RISK_LIMIT_ORDER",InpDailyLossLimitPercent<InpMaximumDrawdownPercent,
             DoubleToString(InpDailyLossLimitPercent,1)+"/"+DoubleToString(InpMaximumDrawdownPercent,1));
+      Check("SIMULATION_COSTS",InpSimulationCommissionPerLot>=0.0 && InpSimulationSlippagePoints>=0,
+            DoubleToString(InpSimulationCommissionPerLot,2)+"/"+
+            IntegerToString(InpSimulationSlippagePoints));
       Check("LIVE_DOUBLE_LOCK",InpSimulationMode || !InpEnableLiveTrading ||
             (!InpSimulationMode && InpEnableLiveTrading),
             InpSimulationMode ? "SIMULATION" : (InpEnableLiveTrading ? "LIVE_CONFIRMED" : "LIVE_DISABLED"));

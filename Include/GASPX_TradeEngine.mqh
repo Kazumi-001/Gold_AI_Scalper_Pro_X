@@ -17,6 +17,7 @@ private:
    double m_maxDrawdown;
    double m_peakEquityProfit;
    double m_maxEquityDrawdown;
+   double m_cumulativeCosts;
    int m_wins;
    int m_losses;
    datetime m_lastAction;
@@ -32,6 +33,15 @@ private:
       return(((closePrice-openPrice)*direction/tickSize)*tickValue*lots);
    }
 
+   double SlippageCostForLots(const double lots)
+   {
+      double tickSize=MarketInfo(Symbol(),MODE_TICKSIZE);
+      double tickValue=MarketInfo(Symbol(),MODE_TICKVALUE);
+      if(tickSize<=0.0 || tickValue<=0.0 || Point<=0.0 || lots<=0.0) return(0.0);
+      double oneSide=((InpSimulationSlippagePoints*Point)/tickSize)*tickValue*lots;
+      return(oneSide*2.0);
+   }
+
    void UpdateDrawdown(void)
    {
       if(m_cumulativeProfit>m_peakCumulative) m_peakCumulative=m_cumulativeProfit;
@@ -39,10 +49,12 @@ private:
       if(drawdown>m_maxDrawdown) m_maxDrawdown=drawdown;
    }
 
-   void LogPerformance(const string action,const double realized,const string reason)
+   void LogPerformance(const string action,const double realized,const double grossRealized,
+                       const double commission,const double slippage,const string reason)
    {
       double pf=(m_grossLoss>0.0 ? m_grossProfit/m_grossLoss : 0.0);
-      g_logger.Performance(action,realized,m_basketRealized,m_cumulativeProfit,
+      g_logger.Performance(action,realized,grossRealized,commission,slippage,m_cumulativeCosts,
+                           m_basketRealized,m_cumulativeProfit,
                            m_grossProfit,m_grossLoss,pf,m_maxDrawdown,
                            m_wins,m_losses,reason);
    }
@@ -83,7 +95,8 @@ public:
      m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_basketRealized=0.0;
      m_cumulativeProfit=0.0; m_grossProfit=0.0; m_grossLoss=0.0;
      m_peakCumulative=0.0; m_maxDrawdown=0.0; m_peakEquityProfit=0.0;
-     m_maxEquityDrawdown=0.0; m_wins=0; m_losses=0; m_lastAction=0; }
+     m_maxEquityDrawdown=0.0; m_cumulativeCosts=0.0;
+     m_wins=0; m_losses=0; m_lastAction=0; }
      
 
    int VirtualDirection(void) { return(m_virtualDirection); }
@@ -101,14 +114,19 @@ public:
    void TrackVirtualEquity(const double floatingProfit)
    {
       if(!IsSimulation()) return;
-      double equityProfit=m_cumulativeProfit+floatingProfit;
+      double liquidationCosts=0.0;
+      if(m_virtualCount>0 && m_virtualTotalLots>0.0)
+         liquidationCosts=m_virtualTotalLots*InpSimulationCommissionPerLot+
+                          SlippageCostForLots(m_virtualTotalLots);
+      double netFloating=floatingProfit-liquidationCosts;
+      double equityProfit=m_cumulativeProfit+netFloating;
       if(equityProfit>m_peakEquityProfit) m_peakEquityProfit=equityProfit;
       double drawdown=m_peakEquityProfit-equityProfit;
       if(drawdown>m_maxEquityDrawdown) m_maxEquityDrawdown=drawdown;
       double balance=MathMax(1.0,AccountBalance());
       double maxDrawdownPercent=m_maxEquityDrawdown/balance*100.0;
       double recovery=(m_maxEquityDrawdown>0.0 ? m_cumulativeProfit/m_maxEquityDrawdown : 0.0);
-      g_logger.Equity(m_cumulativeProfit,floatingProfit,equityProfit,m_peakEquityProfit,
+      g_logger.Equity(m_cumulativeProfit,netFloating,equityProfit,m_peakEquityProfit,
                       drawdown,m_maxEquityDrawdown,maxDrawdownPercent,recovery);
    }
 
@@ -117,16 +135,20 @@ public:
       if(m_virtualCount>0)
       {
          double exitPrice=m_virtualDirection>0 ? Bid : Ask;
-         double realized=ProfitForLots(m_virtualDirection,m_virtualAveragePrice,
-                                       exitPrice,m_virtualTotalLots);
+         double grossRealized=ProfitForLots(m_virtualDirection,m_virtualAveragePrice,
+                                            exitPrice,m_virtualTotalLots);
+         double commission=m_virtualTotalLots*InpSimulationCommissionPerLot;
+         double slippage=SlippageCostForLots(m_virtualTotalLots);
+         double realized=grossRealized-commission-slippage;
          g_logger.Trade("BASKET_CLOSE",m_virtualDirection,m_virtualTotalLots,
                         exitPrice,m_virtualCount-1,true,reason);
          m_basketRealized+=realized;
          m_cumulativeProfit+=realized;
+         m_cumulativeCosts+=commission+slippage;
          if(m_basketRealized>0.0) { m_grossProfit+=m_basketRealized; m_wins++; }
          else if(m_basketRealized<0.0) { m_grossLoss+=-m_basketRealized; m_losses++; }
          UpdateDrawdown();
-         LogPerformance("BASKET_CLOSE",realized,reason);
+         LogPerformance("BASKET_CLOSE",realized,grossRealized,commission,slippage,reason);
       }
       m_virtualDirection=0; m_virtualCount=0; m_virtualLastPrice=0.0;
       m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_basketRealized=0.0;
@@ -139,14 +161,18 @@ public:
       if(m_virtualCount<=0 || m_virtualTotalLots<=0.0) return;
       double closed=m_virtualTotalLots*(InpPartialClosePercent/100.0);
       double exitPrice=m_virtualDirection>0 ? Bid : Ask;
-      double realized=ProfitForLots(m_virtualDirection,m_virtualAveragePrice,exitPrice,closed);
+      double grossRealized=ProfitForLots(m_virtualDirection,m_virtualAveragePrice,exitPrice,closed);
+      double commission=closed*InpSimulationCommissionPerLot;
+      double slippage=SlippageCostForLots(closed);
+      double realized=grossRealized-commission-slippage;
       m_virtualTotalLots-=closed;
       g_logger.Trade("PARTIAL_CLOSE",m_virtualDirection,closed,
                      exitPrice,m_virtualCount-1,true,reason);
       m_basketRealized+=realized;
       m_cumulativeProfit+=realized;
+      m_cumulativeCosts+=commission+slippage;
       UpdateDrawdown();
-      LogPerformance("PARTIAL_CLOSE",realized,reason);
+      LogPerformance("PARTIAL_CLOSE",realized,grossRealized,commission,slippage,reason);
    }
 
    void OnSignal(const GASPX_SignalResult &signal)

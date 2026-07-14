@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.013] - 2026-07-14
+
+### Added
+
+- Configurable Simulation Mode round-turn commission per lot.
+- Configurable adverse slippage points on both entry and exit.
+- Gross realized profit, commission, slippage and cumulative transaction costs in `PERFORMANCE` rows.
+- Net performance metrics after simulated transaction costs.
+- Startup verification of non-negative transaction-cost settings.
+
+### Defaults
+
+- Commission: 7.00 account-currency units per closed lot, round turn.
+- Slippage: 5 points per side, applied as a two-sided cost when volume closes.
+- Bid/ask spread remains included through the existing simulated entry and exit prices.
+
 ## [1.0.012] - 2026-07-14
 
 ### Added

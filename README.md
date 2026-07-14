@@ -2,7 +2,7 @@
 
 Gold AI Scalper Pro X is a modular Expert Advisor framework for MetaTrader 4.
 
-## Build 1.0.012 (Equity Drawdown)
+## Build 1.0.013 (Transaction Cost Stress Test)
 
 - Platform: MetaTrader 4 Build 1400+
 - Target: XM XAUUSD/GOLD symbols
@@ -18,6 +18,7 @@ Gold AI Scalper Pro X is a modular Expert Advisor framework for MetaTrader 4.
 - Verification module: startup self-tests, static checks and MT4 test procedure
 - Performance accounting: realized/cumulative P&L, profit factor and maximum drawdown
 - Equity accounting: floating P&L, equity curve, maximum equity DD and recovery factor
+- Transaction-cost accounting: configurable commission and adverse round-trip slippage
 - Future Version 1.0 scope: adaptive market judgement, Grid + ATR hybrid execution, risk control, and dashboard
 
 This build simulates trades by default. Live orders require two explicit safety inputs to be changed.

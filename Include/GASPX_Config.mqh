@@ -3,7 +3,7 @@
 
 #define GASPX_NAME          "Gold AI Scalper Pro X"
 #define GASPX_VERSION       "1.0"
-#define GASPX_BUILD         "1.0.012"
+#define GASPX_BUILD         "1.0.013"
 #define GASPX_MAGIC_DEFAULT 777
 
 input bool   InpSimulationMode = true;
@@ -48,6 +48,8 @@ input double InpBasketLossPercent = 5.0;
 input bool   InpShowDashboard = true;
 input int    InpMinimumHistoryBars = 250;
 input bool   InpRunStartupSelfTest = true;
+input double InpSimulationCommissionPerLot = 7.0;
+input int    InpSimulationSlippagePoints = 5;
 
 bool GASPX_ValidateInputs(string &reason)
 {
@@ -79,6 +81,8 @@ bool GASPX_ValidateInputs(string &reason)
    { reason="Risk percentage limits must be positive"; return(false); }
    if(InpMinimumHistoryBars<InpEmaSlowPeriod+10)
    { reason="MinimumHistoryBars must exceed slow EMA period"; return(false); }
+   if(InpSimulationCommissionPerLot<0.0 || InpSimulationSlippagePoints<0)
+   { reason="Simulation transaction costs must not be negative"; return(false); }
    reason="";
    return(true);
 }

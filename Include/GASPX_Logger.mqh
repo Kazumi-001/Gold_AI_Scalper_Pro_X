@@ -96,7 +96,9 @@ public:
       FileFlush(m_handle);
    }
 
-   void Performance(const string action,const double realized,const double basketProfit,
+   void Performance(const string action,const double realized,const double grossRealized,
+                    const double commission,const double slippage,const double cumulativeCosts,
+                    const double basketProfit,
                     const double cumulative,const double grossProfit,const double grossLoss,
                     const double profitFactor,const double maxDrawdown,
                     const int wins,const int losses,const string details)
@@ -105,6 +107,10 @@ public:
       string pf=(grossLoss>0.0 ? DoubleToString(profitFactor,3) : "INF");
       string payload="action="+action+
                      ",realized="+DoubleToString(realized,2)+
+                     ",gross_realized="+DoubleToString(grossRealized,2)+
+                     ",commission="+DoubleToString(commission,2)+
+                     ",slippage="+DoubleToString(slippage,2)+
+                     ",cumulative_costs="+DoubleToString(cumulativeCosts,2)+
                      ",basket_profit="+DoubleToString(basketProfit,2)+
                      ",cumulative="+DoubleToString(cumulative,2)+
                      ",gross_profit="+DoubleToString(grossProfit,2)+
