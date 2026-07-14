@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.0.017] - 2026-07-14
+
+### Changed
+
+- Maximum-position default and XM preset restored to three, the best prospective cap tested.
+- Simulation basket stop is anchored to the initial entry price and entry-time ATR.
+- Risk processing now runs before grid expansion on each processing interval.
+
+### Risk behavior
+
+- Grid averaging can no longer move the basket stop farther away from the initial trade thesis.
+- The anchored stop uses the existing `InpStopLossAtrMultiplier` default of 2.0.
+- Take-profit and partial-profit management remain based on the current volume-weighted basket average.
+- Anchored exits are logged as `INITIAL_ANCHORED_STOP`.
+
+### Evidence
+
+- A prospective two-position cap worsened June performance to -998.85 with a 0.800 profit factor.
+- Simple depth reduction is therefore rejected in favor of a fixed initial-risk boundary.
+
 ## [1.0.016] - 2026-07-14
 
 ### Changed

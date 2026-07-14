@@ -22,6 +22,7 @@ private:
    int m_losses;
    int m_basketId;
    datetime m_entryTime;
+   double m_entryPrice;
    int m_maxBasketPositions;
    double m_entryAdx;
    double m_entryAtr;
@@ -107,7 +108,8 @@ public:
      m_cumulativeProfit=0.0; m_grossProfit=0.0; m_grossLoss=0.0;
      m_peakCumulative=0.0; m_maxDrawdown=0.0; m_peakEquityProfit=0.0;
      m_maxEquityDrawdown=0.0; m_cumulativeCosts=0.0;
-     m_wins=0; m_losses=0; m_basketId=0; m_entryTime=0; m_maxBasketPositions=0;
+     m_wins=0; m_losses=0; m_basketId=0; m_entryTime=0; m_entryPrice=0.0;
+     m_maxBasketPositions=0;
      m_entryAdx=0.0; m_entryAtr=0.0; m_entryMarketScore=0.0; m_entryDangerScore=0.0;
      m_entryBuyScore=0; m_entrySellScore=0; m_entryConfidence=0; m_lastAction=0; }
      
@@ -123,6 +125,8 @@ public:
    double MaximumDrawdown(void) { return(m_maxDrawdown); }
    int WinningBaskets(void) { return(m_wins); }
    int LosingBaskets(void) { return(m_losses); }
+   double VirtualInitialPrice(void) { return(m_entryPrice); }
+   double VirtualEntryAtrPoints(void) { return(m_entryAtr); }
 
    double NetVirtualProfit(const double grossFloating)
    {
@@ -175,7 +179,7 @@ public:
       }
       m_virtualDirection=0; m_virtualCount=0; m_virtualLastPrice=0.0;
       m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_basketRealized=0.0;
-      m_entryTime=0; m_maxBasketPositions=0;
+      m_entryTime=0; m_entryPrice=0.0; m_maxBasketPositions=0;
       m_lastAction=TimeCurrent();
       TrackVirtualEquity(0.0);
    }
@@ -212,6 +216,8 @@ public:
          m_basketRealized=0.0;
          m_basketId++;
          m_entryTime=TimeCurrent();
+         RefreshRates();
+         m_entryPrice=(direction>0 ? Ask : Bid);
          m_maxBasketPositions=0;
          m_entryAdx=signal.adx;
          m_entryAtr=signal.atrPoints;
@@ -220,7 +226,6 @@ public:
          m_entryBuyScore=signal.buyScore;
          m_entrySellScore=signal.sellScore;
          m_entryConfidence=signal.confidence;
-         RefreshRates();
          RecordSimulation("INITIAL",direction,0,direction>0 ? Ask : Bid);
          return;
       }

@@ -174,8 +174,11 @@ public:
          double atr=CurrentAtr();
          if(trade.VirtualCount()<=0 || atr<=0.0) { m_virtualPartialDone=false; return; }
          double price=trade.VirtualDirection()>0 ? Bid : Ask;
+         double anchoredAtr=trade.VirtualEntryAtrPoints()*Point;
+         double initialFavorable=(price-trade.VirtualInitialPrice())*trade.VirtualDirection();
+         if(anchoredAtr>0.0 && initialFavorable<=-anchoredAtr*InpStopLossAtrMultiplier)
+         { trade.ResetVirtual("INITIAL_ANCHORED_STOP"); m_virtualPartialDone=false; return; }
          double favorable=(price-trade.VirtualAveragePrice())*trade.VirtualDirection();
-         if(favorable<=-atr*InpStopLossAtrMultiplier) { trade.ResetVirtual("ATR_STOP"); m_virtualPartialDone=false; return; }
          if(favorable>=atr*InpTakeProfitAtrMultiplier) { trade.ResetVirtual("ATR_TAKE_PROFIT"); m_virtualPartialDone=false; return; }
          if(favorable>=atr*InpPartialTriggerAtr && !m_virtualPartialDone)
          { trade.PartialVirtual("ATR_TRIGGER"); m_virtualPartialDone=true; }

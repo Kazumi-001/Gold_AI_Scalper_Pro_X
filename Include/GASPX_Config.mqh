@@ -3,7 +3,7 @@
 
 #define GASPX_NAME          "Gold AI Scalper Pro X"
 #define GASPX_VERSION       "1.0"
-#define GASPX_BUILD         "1.0.016"
+#define GASPX_BUILD         "1.0.017"
 #define GASPX_MAGIC_DEFAULT 777
 
 input bool   InpSimulationMode = true;
@@ -32,7 +32,7 @@ input int    InpSlippagePoints    = 5;
 input int    InpGridStepPoints    = 300;
 input bool   InpUseAtrGrid        = true;
 input double InpGridAtrMultiplier = 1.0;
-input int    InpMaxPositions      = 2;
+input int    InpMaxPositions      = 3;
 input int    InpTradeCooldownSeconds = 30;
 input double InpStopLossAtrMultiplier = 2.0;
 input double InpTakeProfitAtrMultiplier = 1.5;
