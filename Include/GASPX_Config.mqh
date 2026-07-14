@@ -3,7 +3,7 @@
 
 #define GASPX_NAME          "Gold AI Scalper Pro X"
 #define GASPX_VERSION       "1.0"
-#define GASPX_BUILD         "1.0.021"
+#define GASPX_BUILD         "1.0.022"
 #define GASPX_MAGIC_DEFAULT 777
 
 input bool   InpSimulationMode = true;
@@ -54,6 +54,7 @@ input int    InpLossCooldownMinutes = 0;
 input bool   InpAdaptiveEntryScore = true;
 input int    InpLossPenalty1 = 2;
 input int    InpLossPenalty2 = 4;
+input double InpMinimumEntryAtrPoints = 150.0;
 input double InpMaximumEntryAtrPoints = 400.0;
 
 bool GASPX_ValidateInputs(string &reason)
@@ -93,8 +94,10 @@ bool GASPX_ValidateInputs(string &reason)
    if(InpLossPenalty1<0 || InpLossPenalty2<InpLossPenalty1 ||
       InpSignalThreshold+InpLossPenalty2>100)
    { reason="Adaptive entry penalties are invalid"; return(false); }
-   if(InpMaximumEntryAtrPoints<=0.0 || InpMaximumEntryAtrPoints>InpAtrHighPoints)
-   { reason="MaximumEntryAtrPoints is invalid"; return(false); }
+   if(InpMinimumEntryAtrPoints<=0.0 ||
+      InpMaximumEntryAtrPoints<=InpMinimumEntryAtrPoints ||
+      InpMaximumEntryAtrPoints>InpAtrHighPoints)
+   { reason="Entry ATR band is invalid"; return(false); }
    reason="";
    return(true);
 }

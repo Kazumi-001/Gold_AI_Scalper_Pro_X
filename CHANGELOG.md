@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.022] - 2026-07-15
+
+### Added
+
+- Minimum initial-entry ATR of 150 points.
+- New entries are allowed only inside the 150–400 ATR band.
+- `LOW_ATR_ENTRY_BLOCK` logging and ATR-band verification.
+
+### Basis
+
+- Build 1.0.021 baskets below ATR 150 produced a combined net loss.
+
 ## [1.0.021] - 2026-07-15
 
 ### Added

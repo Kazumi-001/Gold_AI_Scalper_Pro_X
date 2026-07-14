@@ -5,8 +5,8 @@ test -f Gold_AI_Scalper_Pro_X.mq4
 test -f Include/GASPX_Config.mqh
 test -f Include/GASPX_Verification.mqh
 grep -q '#property strict' Gold_AI_Scalper_Pro_X.mq4
-grep -q '#property version   "1.021"' Gold_AI_Scalper_Pro_X.mq4
-grep -q '#define GASPX_BUILD         "1.0.021"' Include/GASPX_Config.mqh
+grep -q '#property version   "1.022"' Gold_AI_Scalper_Pro_X.mq4
+grep -q '#define GASPX_BUILD         "1.0.022"' Include/GASPX_Config.mqh
 grep -q 'MarketInfo(Symbol(),MODE_SPREAD)' Include/GASPX_Market.mqh
 grep -q 'void Performance(' Include/GASPX_Logger.mqh
 grep -q 'm_cumulativeProfit' Include/GASPX_TradeEngine.mqh
@@ -40,4 +40,6 @@ test "$(grep -R -l 'OrderClose(' Include | tr '\n' ' ')" = "Include/GASPX_RiskMa
 echo "GASPX static checks passed"
 grep -q 'InpMaximumEntryAtrPoints = 400.0' Include/GASPX_Config.mqh
 grep -q 'HIGH_ATR_ENTRY_BLOCK' Include/GASPX_TradeEngine.mqh
-grep -q 'MAX_ENTRY_ATR' Include/GASPX_Verification.mqh
+grep -q 'ENTRY_ATR_BAND' Include/GASPX_Verification.mqh
+grep -q 'InpMinimumEntryAtrPoints = 150.0' Include/GASPX_Config.mqh
+grep -q 'LOW_ATR_ENTRY_BLOCK' Include/GASPX_TradeEngine.mqh

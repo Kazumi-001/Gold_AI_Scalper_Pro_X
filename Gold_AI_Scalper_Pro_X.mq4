@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.021"
-#property description "Gold AI Scalper Pro X - Build 1.0.021 High ATR Entry Filter"
+#property version   "1.022"
+#property description "Gold AI Scalper Pro X - Build 1.0.022 ATR Entry Band Filter"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"

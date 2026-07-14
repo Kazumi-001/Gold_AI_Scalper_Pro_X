@@ -32,4 +32,5 @@ InpLossCooldownMinutes=0
 InpAdaptiveEntryScore=true
 InpLossPenalty1=2
 InpLossPenalty2=4
+InpMinimumEntryAtrPoints=150.0
 InpMaximumEntryAtrPoints=400.0
