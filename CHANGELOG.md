@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.016] - 2026-07-14
+
+### Changed
+
+- Default and XM simulation preset maximum positions reduced from three to two.
+
+### Evidence
+
+- Prospective Build 1.0.015 testing reduced June drawdown from 20.768% to 9.042%, but remained unprofitable at -703.28.
+- In that run, one-position baskets earned 2,098.99 and two-position baskets earned 1,575.41.
+- Baskets that reached the third position lost 4,378.61 with a 0.406 profit factor.
+
+### Scope
+
+- Signal, exit, transaction-cost, diagnostic and virtual-risk logic are unchanged so the effect of the two-position cap can be measured independently.
+
 ## [1.0.015] - 2026-07-14
 
 ### Changed
