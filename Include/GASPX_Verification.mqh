@@ -37,6 +37,8 @@ public:
       Check("SIMULATION_COSTS",InpSimulationCommissionPerLot>=0.0 && InpSimulationSlippagePoints>=0,
             DoubleToString(InpSimulationCommissionPerLot,2)+"/"+
             IntegerToString(InpSimulationSlippagePoints));
+      Check("LOSS_COOLDOWN",InpLossCooldownMinutes>=0 && InpLossCooldownMinutes<=1440,
+            IntegerToString(InpLossCooldownMinutes));
       Check("LIVE_DOUBLE_LOCK",InpSimulationMode || !InpEnableLiveTrading ||
             (!InpSimulationMode && InpEnableLiveTrading),
             InpSimulationMode ? "SIMULATION" : (InpEnableLiveTrading ? "LIVE_CONFIRMED" : "LIVE_DISABLED"));

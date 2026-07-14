@@ -1,6 +1,6 @@
 #property strict
-#property version   "1.017"
-#property description "Gold AI Scalper Pro X - Build 1.0.017 Anchored Basket Stop"
+#property version   "1.018"
+#property description "Gold AI Scalper Pro X - Build 1.0.018 Loss Cooldown"
 
 #include "Include/GASPX_Config.mqh"
 #include "Include/GASPX_Types.mqh"
@@ -100,8 +100,8 @@ void GASPX_ProcessSnapshot()
       g_logger.Signal(g_lastSignal);
       g_tradeEngine.OnSignal(g_lastSignal);
    }
+   if(pipelineReady) g_tradeEngine.ProcessGrid();
    g_riskManager.Process(g_tradeEngine);
-   if(pipelineReady && g_riskAllowsTrading) g_tradeEngine.ProcessGrid();
    g_positionManager.Refresh(g_tradeEngine);
    GASPX_PositionSummary position=g_positionManager.Summary();
 

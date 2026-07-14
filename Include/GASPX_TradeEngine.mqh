@@ -31,6 +31,7 @@ private:
    int m_entryBuyScore;
    int m_entrySellScore;
    int m_entryConfidence;
+   datetime m_lossCooldownUntil;
    datetime m_lastAction;
 
    bool IsSimulation(void) { return(InpSimulationMode || !InpEnableLiveTrading); }
@@ -111,7 +112,8 @@ public:
      m_wins=0; m_losses=0; m_basketId=0; m_entryTime=0; m_entryPrice=0.0;
      m_maxBasketPositions=0;
      m_entryAdx=0.0; m_entryAtr=0.0; m_entryMarketScore=0.0; m_entryDangerScore=0.0;
-     m_entryBuyScore=0; m_entrySellScore=0; m_entryConfidence=0; m_lastAction=0; }
+     m_entryBuyScore=0; m_entrySellScore=0; m_entryConfidence=0;
+     m_lossCooldownUntil=0; m_lastAction=0; }
      
 
    int VirtualDirection(void) { return(m_virtualDirection); }
@@ -125,6 +127,8 @@ public:
    double MaximumDrawdown(void) { return(m_maxDrawdown); }
    int WinningBaskets(void) { return(m_wins); }
    int LosingBaskets(void) { return(m_losses); }
+   datetime LossCooldownUntil(void) { return(m_lossCooldownUntil); }
+   bool LossCooldownActive(void) { return(TimeCurrent()<m_lossCooldownUntil); }
    double VirtualInitialPrice(void) { return(m_entryPrice); }
    double VirtualEntryAtrPoints(void) { return(m_entryAtr); }
 
@@ -168,7 +172,14 @@ public:
          m_cumulativeProfit+=realized;
          m_cumulativeCosts+=commission+slippage;
          if(m_basketRealized>0.0) { m_grossProfit+=m_basketRealized; m_wins++; }
-         else if(m_basketRealized<0.0) { m_grossLoss+=-m_basketRealized; m_losses++; }
+         else if(m_basketRealized<0.0)
+         {
+            m_grossLoss+=-m_basketRealized; m_losses++;
+            m_lossCooldownUntil=TimeCurrent()+InpLossCooldownMinutes*60;
+            g_logger.Risk("LOSS_COOLDOWN",InpLossCooldownMinutes,
+                          "basket_id="+IntegerToString(m_basketId)+
+                          ",until="+TimeToString(m_lossCooldownUntil,TIME_DATE|TIME_MINUTES));
+         }
          UpdateDrawdown();
          LogPerformance("BASKET_CLOSE",realized,grossRealized,commission,slippage,reason);
          g_logger.Diagnostic(m_basketId,m_virtualDirection,m_entryTime,
@@ -205,7 +216,8 @@ public:
 
    void OnSignal(const GASPX_SignalResult &signal)
    {
-      if(!g_riskAllowsTrading || signal.direction==GASPX_SIGNAL_NONE || !CooldownPassed()) return;
+      if(!g_riskAllowsTrading || LossCooldownActive() ||
+         signal.direction==GASPX_SIGNAL_NONE || !CooldownPassed()) return;
       int direction=(int)signal.direction;
       int type=(direction>0 ? OP_BUY : OP_SELL);
       int opposite=(direction>0 ? OP_SELL : OP_BUY);

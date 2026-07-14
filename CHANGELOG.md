@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.0.018] - 2026-07-14
+
+### Changed
+
+- Reverted the rejected initial-entry anchored stop experiment.
+- Restored Build 1.0.015 three-position, volume-weighted-average ATR stop behavior.
+
+### Added
+
+- Configurable post-loss entry cooldown, defaulting to 30 minutes.
+- All new initial entries are blocked during the cooldown; open-basket management remains active.
+- `LOSS_COOLDOWN` risk events include basket ID and cooldown expiration time.
+- Startup verification of the cooldown range.
+
+### Purpose
+
+- Reduce repeated entries during the same adverse market regime without changing the underlying signal scores or successful basket management.
+
 ## [1.0.017] - 2026-07-14
 
 ### Changed
