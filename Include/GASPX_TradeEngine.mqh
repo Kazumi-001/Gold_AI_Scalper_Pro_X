@@ -15,6 +15,8 @@ private:
    double m_grossLoss;
    double m_peakCumulative;
    double m_maxDrawdown;
+   double m_peakEquityProfit;
+   double m_maxEquityDrawdown;
    int m_wins;
    int m_losses;
    datetime m_lastAction;
@@ -80,7 +82,9 @@ public:
    { m_virtualDirection=0; m_virtualCount=0; m_virtualLastPrice=0.0;
      m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_basketRealized=0.0;
      m_cumulativeProfit=0.0; m_grossProfit=0.0; m_grossLoss=0.0;
-     m_peakCumulative=0.0; m_maxDrawdown=0.0; m_wins=0; m_losses=0; m_lastAction=0; }
+     m_peakCumulative=0.0; m_maxDrawdown=0.0; m_peakEquityProfit=0.0;
+     m_maxEquityDrawdown=0.0; m_wins=0; m_losses=0; m_lastAction=0; }
+     
 
    int VirtualDirection(void) { return(m_virtualDirection); }
    int VirtualCount(void) { return(m_virtualCount); }
@@ -93,6 +97,20 @@ public:
    double MaximumDrawdown(void) { return(m_maxDrawdown); }
    int WinningBaskets(void) { return(m_wins); }
    int LosingBaskets(void) { return(m_losses); }
+
+   void TrackVirtualEquity(const double floatingProfit)
+   {
+      if(!IsSimulation()) return;
+      double equityProfit=m_cumulativeProfit+floatingProfit;
+      if(equityProfit>m_peakEquityProfit) m_peakEquityProfit=equityProfit;
+      double drawdown=m_peakEquityProfit-equityProfit;
+      if(drawdown>m_maxEquityDrawdown) m_maxEquityDrawdown=drawdown;
+      double balance=MathMax(1.0,AccountBalance());
+      double maxDrawdownPercent=m_maxEquityDrawdown/balance*100.0;
+      double recovery=(m_maxEquityDrawdown>0.0 ? m_cumulativeProfit/m_maxEquityDrawdown : 0.0);
+      g_logger.Equity(m_cumulativeProfit,floatingProfit,equityProfit,m_peakEquityProfit,
+                      drawdown,m_maxEquityDrawdown,maxDrawdownPercent,recovery);
+   }
 
    void ResetVirtual(const string reason)
    {
@@ -113,6 +131,7 @@ public:
       m_virtualDirection=0; m_virtualCount=0; m_virtualLastPrice=0.0;
       m_virtualAveragePrice=0.0; m_virtualTotalLots=0.0; m_basketRealized=0.0;
       m_lastAction=TimeCurrent();
+      TrackVirtualEquity(0.0);
    }
 
    void PartialVirtual(const string reason)

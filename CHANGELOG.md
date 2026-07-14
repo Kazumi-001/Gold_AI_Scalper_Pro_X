@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.012] - 2026-07-14
+
+### Added
+
+- Simulation equity curve combining cumulative realized and current floating profit.
+- Peak-equity tracking and current equity drawdown.
+- Maximum equity drawdown in account currency and percentage of account balance.
+- Recovery factor calculated as cumulative realized profit divided by maximum equity drawdown.
+- `EQUITY` CSV events at every simulation processing interval.
+
+### Clarified
+
+- Build 1.0.011 maximum drawdown remains the completed-realization drawdown.
+- Build 1.0.012 equity drawdown additionally captures adverse movement while baskets are open.
+
 ## [1.0.011] - 2026-07-14
 
 ### Added

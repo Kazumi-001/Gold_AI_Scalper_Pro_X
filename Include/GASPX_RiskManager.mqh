@@ -140,6 +140,7 @@ public:
       }
 
       double basket=IsSimulation() ? VirtualProfit(trade) : LiveBasketProfit();
+      if(IsSimulation()) trade.TrackVirtualEquity(basket);
       double basketPercent=basket/balance*100.0;
       if(basketPercent>=InpBasketProfitPercent || basketPercent<=-InpBasketLossPercent)
       {

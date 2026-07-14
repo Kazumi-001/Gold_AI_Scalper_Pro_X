@@ -119,6 +119,25 @@ public:
       FileFlush(m_handle);
    }
 
+   void Equity(const double cumulative,const double floatingProfit,const double equityProfit,
+               const double peakEquityProfit,const double drawdown,const double maxDrawdown,
+               const double maxDrawdownPercent,const double recoveryFactor)
+   {
+      if(!m_enabled || m_handle==INVALID_HANDLE) return;
+      string recovery=(maxDrawdown>0.0 ? DoubleToString(recoveryFactor,3) : "INF");
+      string payload="cumulative="+DoubleToString(cumulative,2)+
+                     ",floating="+DoubleToString(floatingProfit,2)+
+                     ",equity_profit="+DoubleToString(equityProfit,2)+
+                     ",peak_equity_profit="+DoubleToString(peakEquityProfit,2)+
+                     ",drawdown="+DoubleToString(drawdown,2)+
+                     ",max_drawdown="+DoubleToString(maxDrawdown,2)+
+                     ",max_drawdown_percent="+DoubleToString(maxDrawdownPercent,3)+
+                     ",recovery_factor="+recovery;
+      FileWrite(m_handle,TimeToString(TimeCurrent(),TIME_DATE|TIME_SECONDS),"EQUITY",Symbol(),
+                DoubleToString(Bid,Digits),DoubleToString(Ask,Digits),"","","","","",payload);
+      FileFlush(m_handle);
+   }
+
    void Position(const GASPX_PositionSummary &p,const string action)
    {
       if(!m_enabled || m_handle==INVALID_HANDLE) return;
