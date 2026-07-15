@@ -6,7 +6,7 @@ test -f Include/GASPX_Config.mqh
 test -f Include/GASPX_Verification.mqh
 grep -q '#property strict' Gold_AI_Scalper_Pro_X.mq4
 grep -q '#property version   "1.023"' Gold_AI_Scalper_Pro_X.mq4
-grep -q '#define GASPX_BUILD         "1.0.023A"' Include/GASPX_Config.mqh
+grep -q '#define GASPX_BUILD         "1.0.023B"' Include/GASPX_Config.mqh
 grep -q 'MarketInfo(Symbol(),MODE_SPREAD)' Include/GASPX_Market.mqh
 grep -q 'void Performance(' Include/GASPX_Logger.mqh
 grep -q 'm_cumulativeProfit' Include/GASPX_TradeEngine.mqh
@@ -41,6 +41,7 @@ echo "GASPX static checks passed"
 grep -q 'InpMaximumEntryAtrPoints = 400.0' Include/GASPX_Config.mqh
 grep -q 'HIGH_ATR_ENTRY_BLOCK' Include/GASPX_TradeEngine.mqh
 grep -q 'MAX_ENTRY_ATR' Include/GASPX_Verification.mqh
-grep -q 'InpMinimumEntryAdx = 20.0' Include/GASPX_Config.mqh
-grep -q 'LOW_ADX_ENTRY_BLOCK' Include/GASPX_TradeEngine.mqh
-grep -q 'MIN_ENTRY_ADX' Include/GASPX_Verification.mqh
+grep -q 'InpBlockedEntryHour1 = 16' Include/GASPX_Config.mqh
+grep -q 'InpBlockedEntryHour2 = 19' Include/GASPX_Config.mqh
+grep -q 'ENTRY_HOUR_BLOCK' Include/GASPX_TradeEngine.mqh
+grep -q 'ENTRY_HOUR_EXCLUSION' Include/GASPX_Verification.mqh

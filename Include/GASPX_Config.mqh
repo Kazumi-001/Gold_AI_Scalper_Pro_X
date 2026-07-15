@@ -3,7 +3,7 @@
 
 #define GASPX_NAME          "Gold AI Scalper Pro X"
 #define GASPX_VERSION       "1.0"
-#define GASPX_BUILD         "1.0.023A"
+#define GASPX_BUILD         "1.0.023B"
 #define GASPX_MAGIC_DEFAULT 777
 
 input bool   InpSimulationMode = true;
@@ -55,7 +55,8 @@ input bool   InpAdaptiveEntryScore = true;
 input int    InpLossPenalty1 = 2;
 input int    InpLossPenalty2 = 4;
 input double InpMaximumEntryAtrPoints = 400.0;
-input double InpMinimumEntryAdx = 20.0;
+input int    InpBlockedEntryHour1 = 16;
+input int    InpBlockedEntryHour2 = 19;
 
 bool GASPX_ValidateInputs(string &reason)
 {
@@ -96,8 +97,10 @@ bool GASPX_ValidateInputs(string &reason)
    { reason="Adaptive entry penalties are invalid"; return(false); }
    if(InpMaximumEntryAtrPoints<=0.0 || InpMaximumEntryAtrPoints>InpAtrHighPoints)
    { reason="MaximumEntryAtrPoints is invalid"; return(false); }
-   if(InpMinimumEntryAdx<0.0 || InpMinimumEntryAdx>100.0)
-   { reason="MinimumEntryAdx must be 0..100"; return(false); }
+   if(InpBlockedEntryHour1<0 || InpBlockedEntryHour1>23 ||
+      InpBlockedEntryHour2<0 || InpBlockedEntryHour2>23 ||
+      InpBlockedEntryHour1==InpBlockedEntryHour2)
+   { reason="Blocked entry hours are invalid"; return(false); }
    reason="";
    return(true);
 }

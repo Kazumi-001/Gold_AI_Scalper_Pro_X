@@ -1,19 +1,19 @@
 # Changelog
 
-## [1.0.023A] - 2026-07-15
+## [1.0.023B] - 2026-07-15
 
 ### Added
 
-- Minimum initial-entry ADX filter of 20.
-- `LOW_ADX_ENTRY_BLOCK` logging and startup verification.
+- Initial-entry exclusion for broker hours 16 and 19.
+- `ENTRY_HOUR_BLOCK` logging and startup verification.
 
 ### Basis
 
-- In the Build 1.0.021 June test, baskets entered below ADX 20 had a combined loss of approximately 193.
+- Build 1.0.023A June diagnostics showed hours 16 and 19 had the largest combined losses.
 
 ### Unchanged
 
-- ATR maximum, adaptive score, grid, exits, position cap and risk controls.
+- ADX logic, ATR maximum, adaptive score, grid, exits, position cap and risk controls.
 
 ## [1.0.021] - 2026-07-15
 

@@ -249,11 +249,12 @@ public:
                        ",maximum="+DoubleToString(InpMaximumEntryAtrPoints,1));
          return;
       }
-      if(signal.adx<InpMinimumEntryAdx)
+      int entryHour=TimeHour(TimeCurrent());
+      if(entryHour==InpBlockedEntryHour1 || entryHour==InpBlockedEntryHour2)
       {
-         g_logger.Risk("LOW_ADX_ENTRY_BLOCK",(int)signal.adx,
-                       "adx="+DoubleToString(signal.adx,1)+
-                       ",minimum="+DoubleToString(InpMinimumEntryAdx,1));
+         g_logger.Risk("ENTRY_HOUR_BLOCK",entryHour,
+                       "blocked_hours="+IntegerToString(InpBlockedEntryHour1)+"/"+
+                       IntegerToString(InpBlockedEntryHour2));
          return;
       }
 

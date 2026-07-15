@@ -48,8 +48,12 @@ public:
       Check("MAX_ENTRY_ATR",
             InpMaximumEntryAtrPoints>0.0 && InpMaximumEntryAtrPoints<=InpAtrHighPoints,
             DoubleToString(InpMaximumEntryAtrPoints,1));
-      Check("MIN_ENTRY_ADX",InpMinimumEntryAdx>=0.0 && InpMinimumEntryAdx<=100.0,
-            DoubleToString(InpMinimumEntryAdx,1));
+      Check("ENTRY_HOUR_EXCLUSION",
+            InpBlockedEntryHour1>=0 && InpBlockedEntryHour1<=23 &&
+            InpBlockedEntryHour2>=0 && InpBlockedEntryHour2<=23 &&
+            InpBlockedEntryHour1!=InpBlockedEntryHour2,
+            IntegerToString(InpBlockedEntryHour1)+"/"+
+            IntegerToString(InpBlockedEntryHour2));
       Check("LIVE_DOUBLE_LOCK",InpSimulationMode || !InpEnableLiveTrading ||
             (!InpSimulationMode && InpEnableLiveTrading),
             InpSimulationMode ? "SIMULATION" : (InpEnableLiveTrading ? "LIVE_CONFIRMED" : "LIVE_DISABLED"));
