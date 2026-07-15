@@ -1,16 +1,19 @@
 # Changelog
 
-## [1.0.022] - 2026-07-15
+## [1.0.023A] - 2026-07-15
 
 ### Added
 
-- Minimum initial-entry ATR of 150 points.
-- New entries are allowed only inside the 150–400 ATR band.
-- `LOW_ATR_ENTRY_BLOCK` logging and ATR-band verification.
+- Minimum initial-entry ADX filter of 20.
+- `LOW_ADX_ENTRY_BLOCK` logging and startup verification.
 
 ### Basis
 
-- Build 1.0.021 baskets below ATR 150 produced a combined net loss.
+- In the Build 1.0.021 June test, baskets entered below ADX 20 had a combined loss of approximately 193.
+
+### Unchanged
+
+- ATR maximum, adaptive score, grid, exits, position cap and risk controls.
 
 ## [1.0.021] - 2026-07-15
 

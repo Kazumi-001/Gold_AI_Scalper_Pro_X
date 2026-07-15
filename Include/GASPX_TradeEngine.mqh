@@ -242,18 +242,18 @@ public:
       if(!g_riskAllowsTrading || LossCooldownActive() ||
          signal.direction==GASPX_SIGNAL_NONE || !CooldownPassed()) return;
 
-      if(signal.atrPoints<InpMinimumEntryAtrPoints)
-      {
-         g_logger.Risk("LOW_ATR_ENTRY_BLOCK",(int)signal.atrPoints,
-                       "atr_points="+DoubleToString(signal.atrPoints,1)+
-                       ",minimum="+DoubleToString(InpMinimumEntryAtrPoints,1));
-         return;
-      }
       if(signal.atrPoints>InpMaximumEntryAtrPoints)
       {
          g_logger.Risk("HIGH_ATR_ENTRY_BLOCK",(int)signal.atrPoints,
                        "atr_points="+DoubleToString(signal.atrPoints,1)+
                        ",maximum="+DoubleToString(InpMaximumEntryAtrPoints,1));
+         return;
+      }
+      if(signal.adx<InpMinimumEntryAdx)
+      {
+         g_logger.Risk("LOW_ADX_ENTRY_BLOCK",(int)signal.adx,
+                       "adx="+DoubleToString(signal.adx,1)+
+                       ",minimum="+DoubleToString(InpMinimumEntryAdx,1));
          return;
       }
 

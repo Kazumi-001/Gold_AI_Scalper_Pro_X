@@ -45,12 +45,11 @@ public:
              InpSignalThreshold+InpLossPenalty2<=100),
             IntegerToString(InpSignalThreshold)+"/"+
             IntegerToString(InpLossPenalty1)+"/"+IntegerToString(InpLossPenalty2));
-      Check("ENTRY_ATR_BAND",
-            InpMinimumEntryAtrPoints>0.0 &&
-            InpMaximumEntryAtrPoints>InpMinimumEntryAtrPoints &&
-            InpMaximumEntryAtrPoints<=InpAtrHighPoints,
-            DoubleToString(InpMinimumEntryAtrPoints,1)+"/"+
+      Check("MAX_ENTRY_ATR",
+            InpMaximumEntryAtrPoints>0.0 && InpMaximumEntryAtrPoints<=InpAtrHighPoints,
             DoubleToString(InpMaximumEntryAtrPoints,1));
+      Check("MIN_ENTRY_ADX",InpMinimumEntryAdx>=0.0 && InpMinimumEntryAdx<=100.0,
+            DoubleToString(InpMinimumEntryAdx,1));
       Check("LIVE_DOUBLE_LOCK",InpSimulationMode || !InpEnableLiveTrading ||
             (!InpSimulationMode && InpEnableLiveTrading),
             InpSimulationMode ? "SIMULATION" : (InpEnableLiveTrading ? "LIVE_CONFIRMED" : "LIVE_DISABLED"));
