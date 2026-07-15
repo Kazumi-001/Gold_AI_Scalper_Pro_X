@@ -258,6 +258,14 @@ public:
          return;
       }
 
+      if(signal.adx<InpMinimumEntryAdx)
+      {
+         g_logger.Risk("LOW_ADX_ENTRY_BLOCK",(int)signal.adx,
+                       "adx="+DoubleToString(signal.adx,1)+
+                       ",minimum="+DoubleToString(InpMinimumEntryAdx,1));
+         return;
+      }
+
       int requiredScore=RequiredEntryScore();
       if(signal.confidence<requiredScore)
       {

@@ -35,3 +35,4 @@ InpLossPenalty2=4
 InpMaximumEntryAtrPoints=400.0
 InpBlockedEntryHour1=16
 InpBlockedEntryHour2=19
+InpMinimumEntryAdx=20.0

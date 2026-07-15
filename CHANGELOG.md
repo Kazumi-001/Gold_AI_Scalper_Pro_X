@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.023C] - 2026-07-15
+
+### Added
+
+- Minimum initial-entry ADX of 20 on top of Build 1.0.023B.
+- `LOW_ADX_ENTRY_BLOCK` logging and startup verification.
+
+### Basis
+
+- In Build 1.0.023B, entries below ADX 20 produced an estimated combined loss of about 175.
+
 ## [1.0.023B] - 2026-07-15
 
 ### Added
